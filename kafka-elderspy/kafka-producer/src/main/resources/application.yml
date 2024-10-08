@@ -1,0 +1,19 @@
+spring:
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092 # Default for local development
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  application:
+    name: kafka-producer
+server:
+  port: 8081
+
+---
+  spring:
+    config:
+      activate:
+        on-profile: docker
+    kafka:
+      producer:
+        bootstrap-servers: kafka:9092 # Use container name in Docker network
