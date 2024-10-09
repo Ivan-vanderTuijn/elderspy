@@ -1,0 +1,32 @@
+quarkus:
+  application:
+    name: telemetry-client
+
+  log:
+    level: INFO
+    category:
+      "com.example":
+        level: DEBUG
+
+  # Native compilation settings
+  native:
+    container-build: true
+    container-runtime: docker
+
+  # Metrics configuration
+  micrometer:
+    export:
+      json:
+        enabled: true
+        path: /metrics
+
+# Custom configuration properties
+rabbitmq:
+  host: ${RABBITMQ_HOST:rabbitmq}
+  port: ${RABBITMQ_PORT:5672}
+  username: ${RABBITMQ_USERNAME:admin}
+  password: ${RABBITMQ_PASSWORD:admin123}
+
+device:
+  id: ${DEVICE_ID:device-001}
+
