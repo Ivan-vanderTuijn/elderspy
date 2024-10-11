@@ -1,16 +1,4 @@
 services:
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    ports:
-      - "5672:5672"  # AMQP protocol port
-      - "15672:15672"  # Management UI port
-    environment:
-      - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=admin123
-    networks:
-      - telemetry-network
-
   influxdb:
     image: influxdb:2.7
     container_name: influxdb
@@ -28,11 +16,32 @@ services:
     networks:
       - telemetry-network
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"  # AMQP protocol port
+      - "15672:15672"  # Management UI port
+    depends_on:
+      - influxdb
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin123
+    networks:
+      - telemetry-network
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_port_connectivity" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   telemetry-client:
     build:
-      context: ./services/telemetry-client
-      dockerfile: ./src/main/docker/Dockerfile.jvm
+      context: .
+      dockerfile: ./telemetry-client/src/main/docker/Dockerfile.jvm
     container_name: telemetry-client
+    ports:
+      - "8080:8080"
     depends_on:
       - rabbitmq
     environment:
@@ -42,11 +51,12 @@ services:
       - RABBITMQ_PASSWORD=admin123
     networks:
       - telemetry-network
+    restart: on-failure
 
   telemetry-ingestion-service:
     build:
-      context: ./services/telemetry-ingestion-service
-      dockerfile: ./src/main/docker/Dockerfile.jvm
+      context: .
+      dockerfile: ./telemetry-ingestion-service/src/main/docker/Dockerfile.jvm
     container_name: telemetry-ingestion-service
     depends_on:
       - rabbitmq
@@ -62,6 +72,7 @@ services:
       - INFLUXDB_BUCKET=telemetry-bucket
     networks:
       - telemetry-network
+    restart: on-failure
 
 networks:
   telemetry-network:

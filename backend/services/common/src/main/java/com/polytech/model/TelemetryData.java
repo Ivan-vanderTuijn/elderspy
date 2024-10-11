@@ -1,5 +1,6 @@
 package com.polytech.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TelemetryData {
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Instant timestamp;
     private String edgeId;
     private String deviceId;

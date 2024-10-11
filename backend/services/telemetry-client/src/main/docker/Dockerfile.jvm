@@ -85,21 +85,25 @@ ENV LANGUAGE='en_US:en'
 # Set the working directory inside the builder image
 WORKDIR /build
 
-# Copy the project files to the builder image
-COPY --chown=185 . /build
+# Copy the parent POM and create a temporary POM without the telemetry-ingestion-service module
+COPY --chown=185 ./pom.xml /build/pom.xml
+RUN sed '/<module>telemetry-ingestion-service<\/module>/d' /build/pom.xml > /build/temp-pom.xml
 
-# Build the Quarkus application (this will create the target directory)
-RUN ./mvnw clean package -DskipTests -X
+# Copy only the necessary modules
+COPY --chown=185 ./common /build/common
+COPY --chown=185 ./telemetry-client /build/telemetry-client
+
+RUN mvn clean package -f temp-pom.xml -DskipTests -X
 
 FROM registry.access.redhat.com/ubi8/openjdk-17:1.20
 
 ENV LANGUAGE='en_US:en'
 
 # We make four distinct layers so if there are application changes the library layers can be re-used
-COPY --from=builder --chown=185 /build/target/quarkus-app/lib/ /deployments/lib/
-COPY --from=builder --chown=185 /build/target/quarkus-app/*.jar /deployments/
-COPY --from=builder --chown=185 /build/target/quarkus-app/app/ /deployments/app/
-COPY --from=builder --chown=185 /build/target/quarkus-app/quarkus/ /deployments/quarkus/
+COPY --from=builder --chown=185 /build/telemetry-client/target/quarkus-app/lib/ /deployments/lib/
+COPY --from=builder --chown=185 /build/telemetry-client/target/quarkus-app/*.jar /deployments/
+COPY --from=builder --chown=185 /build/telemetry-client/target/quarkus-app/app/ /deployments/app/
+COPY --from=builder --chown=185 /build/telemetry-client/target/quarkus-app/quarkus/ /deployments/quarkus/
 
 EXPOSE 8080
 USER 185

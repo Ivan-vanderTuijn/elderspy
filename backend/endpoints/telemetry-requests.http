@@ -1,0 +1,32 @@
+### Send single telemetry data
+POST http://{{host}}:{{port}}/api/telemetry/send
+Content-Type: application/json
+Accept: application/json
+
+{
+  "timestamp": "{{$isoTimestamp}}",
+  "edgeId": "edge-001",
+  "deviceId": "device-001",
+  "measurement": "temperature",
+  "value": "25.5"
+}
+
+### Send another telemetry data with different values
+POST http://{{host}}:{{port}}/api/telemetry/send
+Content-Type: application/json
+
+{
+  "timestamp": "{{$isoTimestamp}}",
+  "edgeId": "edge-001",
+  "deviceId": "device-002",
+  "measurement": "humidity",
+  "value": "60.0"
+}
+
+### Start continuous telemetry for a device
+POST http://{{host}}:{{port}}/api/telemetry/device/device-001/start
+Content-Type: application/json
+
+### Stop continuous telemetry for a device
+POST http://{{host}}:{{port}}/api/telemetry/device/device-001/stop
+Content-Type: application/json
