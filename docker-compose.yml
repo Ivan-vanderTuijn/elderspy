@@ -1,4 +1,20 @@
 services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "4000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana-provisioning:/etc/grafana/provisioning
+    depends_on:
+      - telemetry-ingestion-service
+    networks:
+      - telemetry-network
+
   influxdb:
     image: influxdb:2.7
     container_name: influxdb
@@ -10,7 +26,7 @@ services:
       - DOCKER_INFLUXDB_INIT_PASSWORD=admin123
       - DOCKER_INFLUXDB_INIT_ORG=telemetry-org
       - DOCKER_INFLUXDB_INIT_BUCKET=telemetry-bucket
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=your-super-secret-auth-token
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
     volumes:
       - influxdb-data:/var/lib/influxdb2
     networks:
@@ -37,7 +53,7 @@ services:
 
   telemetry-client:
     build:
-      context: .
+      context: ./backend/services
       dockerfile: ./telemetry-client/src/main/docker/Dockerfile.jvm
     container_name: telemetry-client
     ports:
@@ -55,7 +71,7 @@ services:
 
   telemetry-ingestion-service:
     build:
-      context: .
+      context: ./backend/services
       dockerfile: ./telemetry-ingestion-service/src/main/docker/Dockerfile.jvm
     container_name: telemetry-ingestion-service
     depends_on:
@@ -67,7 +83,25 @@ services:
       - RABBITMQ_USERNAME=admin
       - RABBITMQ_PASSWORD=admin123
       - INFLUXDB_URL=http://influxdb:8086
-      - INFLUXDB_TOKEN=your-super-secret-auth-token
+      - INFLUXDB_TOKEN=my-super-secret-auth-token
+      - INFLUXDB_ORG=telemetry-org
+      - INFLUXDB_BUCKET=telemetry-bucket
+    networks:
+      - telemetry-network
+    restart: on-failure
+
+  telemetry-analyser-service:
+    build:
+      context: ./backend/services
+      dockerfile: ./telemetry-analyser-service/src/main/docker/Dockerfile.jvm
+    container_name: telemetry-analyser-service
+    ports:
+      - "8081:8080"
+    depends_on:
+      - influxdb
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_TOKEN=my-super-secret-auth-token
       - INFLUXDB_ORG=telemetry-org
       - INFLUXDB_BUCKET=telemetry-bucket
     networks:
@@ -79,4 +113,5 @@ networks:
     driver: bridge
 
 volumes:
+  grafana-data:
   influxdb-data:

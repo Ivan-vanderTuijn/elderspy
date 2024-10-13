@@ -3,6 +3,7 @@ package com.polytech.service.controller;
 import com.polytech.model.TelemetryData;
 import com.polytech.service.service.TelemetryProducer;
 import io.vertx.core.json.JsonObject;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 
+@ApplicationScoped
 @Path("/api/telemetry")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

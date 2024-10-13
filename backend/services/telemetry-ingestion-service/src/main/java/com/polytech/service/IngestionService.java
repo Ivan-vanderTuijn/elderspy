@@ -19,7 +19,7 @@ public class IngestionService {
     @ConfigProperty(name = "influxdb.url", defaultValue = "http://localhost:8086")
     String influxdbUrl;
 
-    @ConfigProperty(name = "influxdb.token", defaultValue = "your-super-secret-auth-token")
+    @ConfigProperty(name = "influxdb.token", defaultValue = "my-super-secret-auth-token")
     String influxdbToken;
 
     @ConfigProperty(name = "influxdb.org", defaultValue = "telemetry-org")
@@ -37,11 +37,6 @@ public class IngestionService {
     @PostConstruct
     void init() {
         log.info("Creating InfluxDB client");
-        log.info("InfluxDB URL: {}", influxdbUrl);
-        log.info("InfluxDB Org: {}", influxdbOrg);
-        log.info("InfluxDB Bucket: {}", influxdbBucket);
-        log.info("InfluxDB Token: {}", influxdbToken);
-
         influxDBClient = InfluxDBClientFactory.create(
                 influxdbUrl,
                 influxdbToken.toCharArray()
@@ -65,7 +60,7 @@ public class IngestionService {
                     .time(data.getTimestamp(), WritePrecision.MS);
 
             writeApi.writePoint(influxdbBucket, influxdbOrg, point);
-            log.info("Successfully stored telemetry data for device {}", data.getDeviceId());
+            log.info("Successfully stored telemetry data for device {} {}", data.getDeviceId(), data);
         } catch (Exception e) {
             log.error("Failed to store telemetry data: {}", e.getMessage());
         }
