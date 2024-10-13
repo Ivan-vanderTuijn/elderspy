@@ -22,7 +22,7 @@ public class TelemetryProducer {
 
     // Inject an emitter to send messages to the "telemetry-out" channel
     @Inject
-    @Channel("telemetry-out")
+    @Channel("telemetry-channel")
     Emitter<TelemetryData> telemetryEmitter;
 
     private final Random random = new Random();
@@ -32,6 +32,7 @@ public class TelemetryProducer {
 
     // Method to send a single telemetry reading
     public void sendTelemetryData(TelemetryData data) {
+        log.info("Sending telemetry data: {}", data);
         telemetryEmitter.send(data);
     }
 

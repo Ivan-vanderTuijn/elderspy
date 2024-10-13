@@ -6,6 +6,7 @@ import com.influxdb.client.WriteApi;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import com.polytech.model.TelemetryData;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -15,22 +16,32 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @Slf4j
 @ApplicationScoped
 public class IngestionService {
-    @ConfigProperty(name = "influxdb.url")
+    @ConfigProperty(name = "influxdb.url", defaultValue = "http://localhost:8086")
     String influxdbUrl;
 
-    @ConfigProperty(name = "influxdb.token")
+    @ConfigProperty(name = "influxdb.token", defaultValue = "your-super-secret-auth-token")
     String influxdbToken;
 
-    @ConfigProperty(name = "influxdb.org")
+    @ConfigProperty(name = "influxdb.org", defaultValue = "telemetry-org")
     String influxdbOrg;
 
-    @ConfigProperty(name = "influxdb.bucket")
+    @ConfigProperty(name = "influxdb.bucket", defaultValue = "telemetry-bucket")
     String influxdbBucket;
 
-    private final InfluxDBClient influxDBClient;
+    private InfluxDBClient influxDBClient;
 
     @Inject
     public IngestionService() {
+    }
+
+    @PostConstruct
+    void init() {
+        log.info("Creating InfluxDB client");
+        log.info("InfluxDB URL: {}", influxdbUrl);
+        log.info("InfluxDB Org: {}", influxdbOrg);
+        log.info("InfluxDB Bucket: {}", influxdbBucket);
+        log.info("InfluxDB Token: {}", influxdbToken);
+
         influxDBClient = InfluxDBClientFactory.create(
                 influxdbUrl,
                 influxdbToken.toCharArray()

@@ -13,7 +13,6 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TelemetryData {
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Instant timestamp;
     private String edgeId;
     private String deviceId;

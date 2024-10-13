@@ -29,7 +29,7 @@ public class TelemetryController {
             }
 
             producer.sendTelemetryData(data);
-
+            log.info("Telemetry data sent successfully: {}", data);
             return Response.ok()
                     .type(MediaType.APPLICATION_JSON)
                     .entity(new JsonObject()
@@ -54,6 +54,7 @@ public class TelemetryController {
     public Response startContinuousTelemetry(@PathParam("deviceId") String deviceId) {
         try {
             producer.startContinuousTelemetry(deviceId);
+            log.info("Started continuous telemetry for device: {}", deviceId);
             return Response.ok()
                     .entity("Started continuous telemetry for device: " + deviceId)
                     .build();
@@ -70,6 +71,7 @@ public class TelemetryController {
     public Response stopContinuousTelemetry(@PathParam("deviceId") String deviceId) {
         try {
             producer.stopContinuousTelemetry(deviceId);
+            log.info("Stopped continuous telemetry for device: {}", deviceId);
             return Response.ok()
                     .entity("Stopped continuous telemetry for device: " + deviceId)
                     .build();
