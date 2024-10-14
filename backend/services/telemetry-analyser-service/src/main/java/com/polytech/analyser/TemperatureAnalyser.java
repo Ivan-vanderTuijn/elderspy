@@ -73,6 +73,7 @@ public class TemperatureAnalyser implements TelemetryAnalyser {
 
     @Scheduled(cron = "{cron.expression}")
     public void analyse(ScheduledExecution execution) {
+        log.info("coucou3");
         log.info("Starting temperature analysis");
         QueryApi queryApi = influxDBClient.getQueryApi();
 

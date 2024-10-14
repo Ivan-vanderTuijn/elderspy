@@ -1,3 +1,16 @@
 package com.polytech.dti;
 
-public record Configuration(String frequency, String timespan, Double threshold) {}
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Configuration {
+    private String frequency;
+    private String timespan;
+    private Double threshold;
+}
