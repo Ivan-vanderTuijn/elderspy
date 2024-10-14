@@ -7,11 +7,11 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.jvm -t quarkus/telemetry-analyser-service-jvm .
+# docker build -f src/main/docker/Dockerfile.jvm -t quarkus/gsm-gateway-jvm .
 #
 # Then run the container using:
 #
-# docker run -i --rm -p 8080:8080 quarkus/telemetry-analyser-service-jvm
+# docker run -i --rm -p 8080:8080 quarkus/gsm-gateway-jvm
 #
 # If you want to include the debug port into your docker image
 # you will have to expose the debug port (default 5005 being the default) like this :  EXPOSE 8080 5005.
@@ -20,7 +20,7 @@
 #
 # Then run the container using :
 #
-# docker run -i --rm -p 8080:8080 quarkus/telemetry-analyser-service-jvm
+# docker run -i --rm -p 8080:8080 quarkus/gsm-gateway-jvm
 #
 # This image uses the `run-java.sh` script to run the application.
 # This scripts computes the command line to execute your Java application, and
@@ -87,11 +87,11 @@ WORKDIR /build
 
 # Copy the parent POM and create a temporary POM without the telemetry-client module
 COPY --chown=185 ./pom.xml /build/pom.xml
-RUN sed -i '/<module>/!b;/<module>\(common\|telemetry-analyser-service\)<\/module>/!d' /build/pom.xml
+RUN sed -i '/<module>/!b;/<module>\(common\|gsm-gateway\)<\/module>/!d' /build/pom.xml
 
 # Copy only the necessary modules
 COPY --chown=185 ./common /build/common
-COPY --chown=185 ./telemetry-analyser-service /build/telemetry-analyser-service
+COPY --chown=185 ./gsm-gateway /build/gsm-gateway
 
 RUN mvn clean package -DskipTests -X
 
@@ -100,16 +100,15 @@ FROM registry.access.redhat.com/ubi8/openjdk-17:1.20
 ENV LANGUAGE='en_US:en'
 
 # We make four distinct layers so if there are application changes the library layers can be re-used
-COPY --from=builder --chown=185 /build/telemetry-analyser-service/target/quarkus-app/lib/ /deployments/lib/
-COPY --from=builder --chown=185 /build/telemetry-analyser-service/target/quarkus-app/*.jar /deployments/
-COPY --from=builder --chown=185 /build/telemetry-analyser-service/target/quarkus-app/app/ /deployments/app/
-COPY --from=builder --chown=185 /build/telemetry-analyser-service/target/quarkus-app/quarkus/ /deployments/quarkus/
+COPY --from=builder --chown=185 /build/gsm-gateway/target/quarkus-app/lib/ /deployments/lib/
+COPY --from=builder --chown=185 /build/gsm-gateway/target/quarkus-app/*.jar /deployments/
+COPY --from=builder --chown=185 /build/gsm-gateway/target/quarkus-app/app/ /deployments/app/
+COPY --from=builder --chown=185 /build/gsm-gateway/target/quarkus-app/quarkus/ /deployments/quarkus/
 
-EXPOSE 9902
+EXPOSE 9904
 USER 185
 ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
 
 ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]
-
 

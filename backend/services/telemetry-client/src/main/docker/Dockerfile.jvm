@@ -87,7 +87,7 @@ WORKDIR /build
 
 # Copy the parent POM and create a temporary POM without the telemetry-ingestion-service module
 COPY --chown=185 ./pom.xml /build/pom.xml
-RUN sed -i -e '/<module>telemetry-ingestion-service<\/module>/d' -e '/<module>telemetry-analyser-service<\/module>/d' /build/pom.xml
+RUN sed -i '/<module>/!b;/<module>\(common\|telemetry-client\)<\/module>/!d' /build/pom.xml
 
 # Copy only the necessary modules
 COPY --chown=185 ./common /build/common
@@ -105,7 +105,7 @@ COPY --from=builder --chown=185 /build/telemetry-client/target/quarkus-app/*.jar
 COPY --from=builder --chown=185 /build/telemetry-client/target/quarkus-app/app/ /deployments/app/
 COPY --from=builder --chown=185 /build/telemetry-client/target/quarkus-app/quarkus/ /deployments/quarkus/
 
-EXPOSE 8080
+EXPOSE 9900
 USER 185
 ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"

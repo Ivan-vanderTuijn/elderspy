@@ -67,12 +67,6 @@
             <artifactId>quarkus-jackson</artifactId>
         </dependency>
 
-        <!-- Scheduler for periodic telemetry generation -->
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-scheduler</artifactId>
-        </dependency>
-
         <!-- Health checks -->
         <dependency>
             <groupId>io.quarkus</groupId>

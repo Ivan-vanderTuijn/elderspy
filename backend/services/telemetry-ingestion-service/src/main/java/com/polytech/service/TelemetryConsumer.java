@@ -1,10 +1,8 @@
-package com.polytech;
+package com.polytech.service;
 
 import com.polytech.model.TelemetryData;
-import com.polytech.service.IngestionService;
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 

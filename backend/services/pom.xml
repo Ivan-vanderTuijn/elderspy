@@ -13,5 +13,7 @@
         <module>telemetry-client</module>
         <module>telemetry-ingestion-service</module>
         <module>telemetry-analyser-service</module>
+        <module>gsm-gateway</module>
+        <module>alerting-service</module>
     </modules>
 </project>

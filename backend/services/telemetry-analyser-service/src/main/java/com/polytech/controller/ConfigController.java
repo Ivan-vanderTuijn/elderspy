@@ -2,7 +2,7 @@ package com.polytech.controller;
 
 import com.polytech.service.SchedulerService;
 import com.polytech.service.TemperatureAnalyser;
-import com.polytech.dti.Configuration;
+import com.polytech.model.AnalyserConfiguration;
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -33,14 +33,14 @@ public class ConfigController {
 
     @GET
     @Path("/temperature")
-    public Configuration getAnalysisConfiguration() {
+    public AnalyserConfiguration getAnalysisConfiguration() {
         log.info("Returning analysis configuration");
-        return new Configuration(cronExpression, temperatureAnalyser.getAnalyseTimespan(), temperatureAnalyser.getTemperatureThreshold());
+        return new AnalyserConfiguration(cronExpression, temperatureAnalyser.getAnalyseTimespan(), temperatureAnalyser.getTemperatureThreshold());
     }
 
     @POST
     @Path("/temperature")
-    public Response configureAnalysis(Configuration configuration) {
+    public Response configureAnalysis(AnalyserConfiguration configuration) {
         log.info("Updating analysis configuration");
         String interval = configuration.getInterval();
         String timespan = configuration.getTimespan();

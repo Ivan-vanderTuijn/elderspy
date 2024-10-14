@@ -1,4 +1,4 @@
-package com.polytech.dti;
+package com.polytech.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Configuration {
+public class AnalyserConfiguration {
     private String interval;
     private String timespan;
     private Double threshold;

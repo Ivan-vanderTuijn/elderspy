@@ -13,7 +13,7 @@ services:
     depends_on:
       - telemetry-ingestion-service
     networks:
-      - telemetry-network
+      - elder-spy-network
 
   influxdb:
     image: influxdb:2.7
@@ -30,7 +30,7 @@ services:
     volumes:
       - influxdb-data:/var/lib/influxdb2
     networks:
-      - telemetry-network
+      - elder-spy-network
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -44,7 +44,7 @@ services:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin123
     networks:
-      - telemetry-network
+      - elder-spy-network
     healthcheck:
       test: [ "CMD", "rabbitmq-diagnostics", "check_port_connectivity" ]
       interval: 30s
@@ -57,7 +57,7 @@ services:
       dockerfile: ./telemetry-client/src/main/docker/Dockerfile.jvm
     container_name: telemetry-client
     ports:
-      - "8080:8080"
+      - "9900:9900"
     depends_on:
       - rabbitmq
     environment:
@@ -66,7 +66,7 @@ services:
       - RABBITMQ_USERNAME=admin
       - RABBITMQ_PASSWORD=admin123
     networks:
-      - telemetry-network
+      - elder-spy-network
     restart: on-failure
 
   telemetry-ingestion-service:
@@ -74,6 +74,8 @@ services:
       context: ./backend/services
       dockerfile: ./telemetry-ingestion-service/src/main/docker/Dockerfile.jvm
     container_name: telemetry-ingestion-service
+    ports:
+      - "9901:9901"
     depends_on:
       - rabbitmq
       - influxdb
@@ -87,7 +89,7 @@ services:
       - INFLUXDB_ORG=telemetry-org
       - INFLUXDB_BUCKET=telemetry-bucket
     networks:
-      - telemetry-network
+      - elder-spy-network
     restart: on-failure
 
   telemetry-analyser-service:
@@ -96,7 +98,7 @@ services:
       dockerfile: ./telemetry-analyser-service/src/main/docker/Dockerfile.jvm
     container_name: telemetry-analyser-service
     ports:
-      - "8081:8080"
+      - "9902:9902"
     depends_on:
       - influxdb
     environment:
@@ -105,11 +107,38 @@ services:
       - INFLUXDB_ORG=telemetry-org
       - INFLUXDB_BUCKET=telemetry-bucket
     networks:
-      - telemetry-network
+      - elder-spy-network
+    restart: on-failure
+
+  alerting-service:
+    build:
+      context: ./backend/services
+      dockerfile: ./alerting-service/src/main/docker/Dockerfile.jvm
+    container_name: alerting-service
+    ports:
+      - "9903:9903"
+    networks:
+      - elder-spy-network
+    restart: on-failure
+
+  gsm-gateway:
+    build:
+      context: ./backend/services
+      dockerfile: ./gsm-gateway/src/main/docker/Dockerfile.jvm
+    container_name: gsm-gateway
+    ports:
+      - "9904:9904"
+    depends_on:
+      - alerting-service
+    environment:
+      - ALERTING_SERVICE_HOST=alerting-service
+      - ALERTING_SERVICE_PORT=9903
+    networks:
+      - elder-spy-network
     restart: on-failure
 
 networks:
-  telemetry-network:
+  elder-spy-network:
     driver: bridge
 
 volumes:
