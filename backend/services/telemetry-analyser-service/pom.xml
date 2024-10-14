@@ -80,11 +80,6 @@
         </dependency>
 
         <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-quartz</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.polytech</groupId>
             <artifactId>common</artifactId>
             <version>1.0-SNAPSHOT</version>

@@ -1,8 +1,7 @@
 package com.polytech.controller;
 
-import com.cronutils.validation.Cron;
-import com.cronutils.validation.CronValidator;
-import com.polytech.analyser.TemperatureAnalyser;
+import com.polytech.service.SchedulerService;
+import com.polytech.service.TemperatureAnalyser;
 import com.polytech.dti.Configuration;
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -12,7 +11,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.quartz.CronExpression;
 
 @ApplicationScoped
 @Path("/config")
@@ -23,6 +21,9 @@ public class ConfigController {
 
     @Inject
     TemperatureAnalyser temperatureAnalyser;
+
+    @Inject
+    SchedulerService schedulerService;
 
     @ConfigProperty(name = "cron.expression", defaultValue = "0 */5 * * * ?")
     String cronExpression;
@@ -41,14 +42,10 @@ public class ConfigController {
     @Path("/temperature")
     public Response configureAnalysis(Configuration configuration) {
         log.info("Updating analysis configuration");
-        String frequency = configuration.getFrequency();
+        String interval = configuration.getInterval();
         String timespan = configuration.getTimespan();
         Double threshold = configuration.getThreshold();
 
-        if (validateFrequency(frequency)) {
-            this.cronExpression = frequency;
-            log.info("Analysis frequency updated to: {}", frequency);
-        }
         if (validateTimespan(timespan)) {
             temperatureAnalyser.setAnalyseTimespan(timespan);
             log.info("Analysis timespan updated to: {}", timespan);
@@ -57,6 +54,12 @@ public class ConfigController {
             temperatureAnalyser.setTemperatureThreshold(threshold);
             log.info("Temperature threshold updated to: {}", threshold);
         }
+        if (validateInterval(interval)) {
+            this.cronExpression = interval;
+            log.info("Analysis interval updated to: {}", interval);
+            schedulerService.schedule(temperatureAnalyser, "temperature-analysis", interval);
+        }
+
         log.info("Configuration updated successfully");
         return Response.ok()
                 .type(MediaType.APPLICATION_JSON)
@@ -66,11 +69,11 @@ public class ConfigController {
                 .build();
     }
 
-    private boolean validateFrequency(String frequency) {
-        if (CronExpression.isValidExpression(frequency)) {
+    private boolean validateInterval(String interval) {
+        if (interval.matches("([0-9]+)(s|m|h)")) {
             return true;
         } else {
-            log.error("Invalid frequency format: {}", frequency);
+            log.error("Invalid frequency format: {}", interval);
         }
         return false;
     }

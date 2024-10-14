@@ -1,4 +1,4 @@
-package com.polytech.analyser;
+package com.polytech.service;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
@@ -8,6 +8,7 @@ import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 import io.quarkus.scheduler.Scheduled;
 import io.quarkus.scheduler.ScheduledExecution;
+import io.quarkus.scheduler.Scheduler;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -45,6 +46,9 @@ public class TemperatureAnalyser implements TelemetryAnalyser {
     @ConfigProperty(name = "analyse.timespan", defaultValue = "PT5M")
     String analyseTimespan;
 
+    @ConfigProperty(name = "analyse.interval", defaultValue = "5s")
+    String analyseInterval;
+
     private InfluxDBClient influxDBClient;
 
     @Inject
@@ -71,9 +75,7 @@ public class TemperatureAnalyser implements TelemetryAnalyser {
         }
     }
 
-    @Scheduled(cron = "{cron.expression}")
-    public void analyse(ScheduledExecution execution) {
-        log.info("coucou3");
+    public void analyse() {
         log.info("Starting temperature analysis");
         QueryApi queryApi = influxDBClient.getQueryApi();
 

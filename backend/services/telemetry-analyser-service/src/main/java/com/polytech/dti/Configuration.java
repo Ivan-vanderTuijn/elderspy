@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Configuration {
-    private String frequency;
+    private String interval;
     private String timespan;
     private Double threshold;
 }
