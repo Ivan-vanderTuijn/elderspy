@@ -1,0 +1,18 @@
+services:
+  nanomq:
+    image: emqx/nanomq:latest
+    container_name: nanomq
+    ports:
+      - "1883:1883"    # MQTT
+      - "8083:8083"    # WebSockets
+      - "8883:8883"    # Secure MQTT over SSL/TLS
+    volumes:
+      - ./nanomq.conf:/etc/nanomq.conf  # Mount your NanoMQ configuration
+    networks:
+      - iot_network
+
+  # other future services
+
+networks:
+  iot_network:
+    driver: bridge
