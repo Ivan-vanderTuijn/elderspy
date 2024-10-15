@@ -1,0 +1,203 @@
+[
+    {
+        "id": "b9ad0cf6d1b755ec",
+        "type": "inject",
+        "z": "a3d3f018d98085a6",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 310,
+        "y": 280,
+        "wires": [
+            [
+                "9cb72180ea2e6467"
+            ]
+        ]
+    },
+    {
+        "id": "9cb72180ea2e6467",
+        "type": "function",
+        "z": "a3d3f018d98085a6",
+        "name": "gen_temp",
+        "func": "// Fonction pour générer une température simulée\nfunction genererTemperature() {\n  // Température de base (par exemple, entre 18°C et 25°C)\n  const temperatureBase = 20;\n  \n  // Variation aléatoire entre -2 et +2 pour simuler des changements naturels\n  const variation = Math.random() * 4 - 2;\n  \n  // Retourne la température simulée avec deux décimales\n  return (temperatureBase + variation).toFixed(2);\n}\nmsg.payload = genererTemperature()\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 280,
+        "wires": [
+            [
+                "9bcf2bd447e5fe09",
+                "e75423d22b0421c8"
+            ]
+        ]
+    },
+    {
+        "id": "9bcf2bd447e5fe09",
+        "type": "debug",
+        "z": "a3d3f018d98085a6",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": false,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 730,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "e75423d22b0421c8",
+        "type": "mqtt out",
+        "z": "a3d3f018d98085a6",
+        "name": "",
+        "topic": "house/1/temp/",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "612f9c3debb902b4",
+        "x": 760,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "1d62631009a24e57",
+        "type": "inject",
+        "z": "a3d3f018d98085a6",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 310,
+        "y": 420,
+        "wires": [
+            [
+                "8c63803bbff417bf"
+            ]
+        ]
+    },
+    {
+        "id": "8c63803bbff417bf",
+        "type": "function",
+        "z": "a3d3f018d98085a6",
+        "name": "gen_temp",
+        "func": "// Fonction pour générer une température simulée\nfunction genererTemperature() {\n  // Température de base (par exemple, entre 18°C et 25°C)\n  const temperatureBase = 20;\n  \n  // Variation aléatoire entre -2 et +2 pour simuler des changements naturels\n  const variation = Math.random() * 4 - 2;\n  \n  // Retourne la température simulée avec deux décimales\n  return (temperatureBase + variation).toFixed(2);\n}\nmsg.payload = genererTemperature()\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 420,
+        "wires": [
+            [
+                "fcb7cb632ca2e336",
+                "0343def213082809"
+            ]
+        ]
+    },
+    {
+        "id": "fcb7cb632ca2e336",
+        "type": "debug",
+        "z": "a3d3f018d98085a6",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": false,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 730,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "0343def213082809",
+        "type": "mqtt out",
+        "z": "a3d3f018d98085a6",
+        "name": "",
+        "topic": "house/2/temp/",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "612f9c3debb902b4",
+        "x": 760,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "612f9c3debb902b4",
+        "type": "mqtt-broker",
+        "name": "NanoMQ",
+        "broker": "nanomq",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
