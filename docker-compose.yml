@@ -108,6 +108,8 @@ services:
       - telemetry-network
     restart: on-failure
 
+ 
+
 networks:
   telemetry-network:
     driver: bridge
@@ -115,3 +117,4 @@ networks:
 volumes:
   grafana-data:
   influxdb-data:
+  node_red_data:

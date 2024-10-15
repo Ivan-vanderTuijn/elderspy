@@ -5,7 +5,7 @@ using namespace std;
 
 const string SERVER_ADDRESS("tcp://localhost:1883"); //Le port par défaut mqtt de NanoMQ est 1883
 const string CLIENT_ID("sampleClient");
-const string TOPIC("test/topic");
+const string TOPIC("house/1/temp/");
 
 const int QOS = 1;
 const string PAYLOAD("Hello NanoMQ from C++");

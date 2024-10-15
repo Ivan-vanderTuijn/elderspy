@@ -11,8 +11,23 @@ services:
     networks:
       - iot_network
 
+  nodered :
+    build: ../sensors
+    image: nodered/node-red
+    environment:
+    - FLOWS = ../sensors/flows.json
+    - NODE_RED_ENABLE_PROJECTS=false
+    ports:
+      - "1880:1880"
+    restart: always
+    networks:
+      - iot_network
+
   # other future services
 
 networks:
   iot_network:
     driver: bridge
+
+volumes:
+  node_red_data:
