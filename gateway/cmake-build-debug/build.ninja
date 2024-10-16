@@ -70,6 +70,13 @@ build CMakeFiles/gateway.dir/src/tcp_handler.cpp.o: CXX_COMPILER__gateway_unscan
   OBJECT_DIR = CMakeFiles/gateway.dir
   OBJECT_FILE_DIR = CMakeFiles/gateway.dir/src
 
+build CMakeFiles/gateway.dir/src/telemetry_db.cpp.o: CXX_COMPILER__gateway_unscanned_Debug /home/dorian/projects/SI5/Archi-Logicielle/elderspy/gateway/src/telemetry_db.cpp || cmake_object_order_depends_target_gateway
+  DEP_FILE = CMakeFiles/gateway.dir/src/telemetry_db.cpp.o.d
+  FLAGS = -Wall -g -std=gnu++17 -fdiagnostics-color=always
+  INCLUDES = -I/home/dorian/projects/SI5/Archi-Logicielle/elderspy/gateway/include
+  OBJECT_DIR = CMakeFiles/gateway.dir
+  OBJECT_FILE_DIR = CMakeFiles/gateway.dir/src
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target gateway
@@ -78,9 +85,9 @@ build CMakeFiles/gateway.dir/src/tcp_handler.cpp.o: CXX_COMPILER__gateway_unscan
 #############################################
 # Link the executable build/gateway
 
-build build/gateway: CXX_EXECUTABLE_LINKER__gateway_Debug CMakeFiles/gateway.dir/src/main.cpp.o CMakeFiles/gateway.dir/src/mqtt_client.cpp.o CMakeFiles/gateway.dir/src/tcp_handler.cpp.o
+build build/gateway: CXX_EXECUTABLE_LINKER__gateway_Debug CMakeFiles/gateway.dir/src/main.cpp.o CMakeFiles/gateway.dir/src/mqtt_client.cpp.o CMakeFiles/gateway.dir/src/tcp_handler.cpp.o CMakeFiles/gateway.dir/src/telemetry_db.cpp.o
   FLAGS = -Wall -g
-  LINK_LIBRARIES = -lpaho-mqttpp3  -lpaho-mqtt3as  -lamqpcpp  -lpthread  -ldl
+  LINK_LIBRARIES = -lpaho-mqttpp3  -lpaho-mqtt3as  -lamqpcpp  -lpthread  -ldl  -lsqlite3
   OBJECT_DIR = CMakeFiles/gateway.dir
   POST_BUILD = :
   PRE_LINK = :
