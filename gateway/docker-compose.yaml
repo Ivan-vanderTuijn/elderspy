@@ -1,6 +1,7 @@
 services:
   nanomq:
-    image: emqx/nanomq:latest
+    image: emqx/nanomq:latest-full
+
     container_name: nanomq
     ports:
       - "1883:1883"    # MQTT
@@ -15,7 +16,7 @@ services:
     build: ../sensors
     image: nodered/node-red
     environment:
-    - FLOWS = ../sensors/flows.json
+    - FLOWS=../sensors/flows.json
     - NODE_RED_ENABLE_PROJECTS=false
     ports:
       - "1880:1880"
