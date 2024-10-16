@@ -4,11 +4,11 @@
 using namespace std;
 
 const string SERVER_ADDRESS("tcp://localhost:1883"); //Le port par défaut mqtt de NanoMQ est 1883
-const string CLIENT_ID("sampleClient");
+const string CLIENT_ID("gateway");
 const string TOPIC("house/1/temp/");
 
 const int QOS = 1;
-const string PAYLOAD("Hello NanoMQ from C++");
+const string PAYLOAD("Payload de test");
 
 class callback : public virtual mqtt::callback {
 public:
@@ -35,28 +35,26 @@ int main() {
     connOpts.set_clean_session(true);
 
     try {
-        // Connect to NanoMQ
         cout << "Connecting to the NanoMQ server..." << endl;
         client.connect(connOpts)->wait();
         cout << "Connected to NanoMQ!" << endl;
 
-        // Subscribe to a topic
         cout << "Subscribing to topic: " << TOPIC << endl;
         client.subscribe(TOPIC, QOS);
 
-        // Publish a message
         cout << "Publishing message to NanoMQ: " << PAYLOAD << endl;
         mqtt::message_ptr pubmsg = mqtt::make_message(TOPIC, PAYLOAD);
         pubmsg->set_qos(QOS);
         client.publish(pubmsg)->wait();
 
-        // Keep the client alive for a while to receive messages
-        this_thread::sleep_for(chrono::seconds(5));
 
-        // Disconnect
-        cout << "Disconnecting from NanoMQ..." << endl;
-        client.disconnect()->wait();
-        cout << "Disconnected!" << endl;
+
+        this_thread::sleep_for(chrono::seconds(1));
+        // Keep the client alive to receive messages
+        cout << "Waiting for messages... (Press Ctrl+C to exit)" << endl;
+        while (true) {
+            this_thread::sleep_for(chrono::seconds(1));
+        }
     }
     catch (const mqtt::exception& exc) {
         cerr << "Error: " << exc.what() << endl;
