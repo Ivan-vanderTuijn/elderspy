@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(Gateway)
 
 # Set C++ standard
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 # Define include directories
 include_directories(include)
@@ -18,7 +18,8 @@ set(BUILD_DIR ${CMAKE_BINARY_DIR}/build)
 file(GLOB SRC_FILES "${SRC_DIR}/*.cpp")
 
 # Set the target output executable name (without directory)
-add_executable(gateway ${SRC_FILES})
+add_executable(gateway ${SRC_FILES}
+        include/mqtt_client.h)
 
 # Specify output directory for the executable
 set_target_properties(gateway PROPERTIES

@@ -51,21 +51,21 @@ build cmake_object_order_depends_target_gateway: phony || .
 
 build CMakeFiles/gateway.dir/src/main.cpp.o: CXX_COMPILER__gateway_unscanned_Debug /home/dorian/projects/SI5/Archi-Logicielle/elderspy/gateway/src/main.cpp || cmake_object_order_depends_target_gateway
   DEP_FILE = CMakeFiles/gateway.dir/src/main.cpp.o.d
-  FLAGS = -Wall -g -std=gnu++11 -fdiagnostics-color=always
+  FLAGS = -Wall -g -std=gnu++17 -fdiagnostics-color=always
   INCLUDES = -I/home/dorian/projects/SI5/Archi-Logicielle/elderspy/gateway/include
   OBJECT_DIR = CMakeFiles/gateway.dir
   OBJECT_FILE_DIR = CMakeFiles/gateway.dir/src
 
-build CMakeFiles/gateway.dir/src/nanomq_client.cpp.o: CXX_COMPILER__gateway_unscanned_Debug /home/dorian/projects/SI5/Archi-Logicielle/elderspy/gateway/src/nanomq_client.cpp || cmake_object_order_depends_target_gateway
-  DEP_FILE = CMakeFiles/gateway.dir/src/nanomq_client.cpp.o.d
-  FLAGS = -Wall -g -std=gnu++11 -fdiagnostics-color=always
+build CMakeFiles/gateway.dir/src/mqtt_client.cpp.o: CXX_COMPILER__gateway_unscanned_Debug /home/dorian/projects/SI5/Archi-Logicielle/elderspy/gateway/src/mqtt_client.cpp || cmake_object_order_depends_target_gateway
+  DEP_FILE = CMakeFiles/gateway.dir/src/mqtt_client.cpp.o.d
+  FLAGS = -Wall -g -std=gnu++17 -fdiagnostics-color=always
   INCLUDES = -I/home/dorian/projects/SI5/Archi-Logicielle/elderspy/gateway/include
   OBJECT_DIR = CMakeFiles/gateway.dir
   OBJECT_FILE_DIR = CMakeFiles/gateway.dir/src
 
 build CMakeFiles/gateway.dir/src/tcp_handler.cpp.o: CXX_COMPILER__gateway_unscanned_Debug /home/dorian/projects/SI5/Archi-Logicielle/elderspy/gateway/src/tcp_handler.cpp || cmake_object_order_depends_target_gateway
   DEP_FILE = CMakeFiles/gateway.dir/src/tcp_handler.cpp.o.d
-  FLAGS = -Wall -g -std=gnu++11 -fdiagnostics-color=always
+  FLAGS = -Wall -g -std=gnu++17 -fdiagnostics-color=always
   INCLUDES = -I/home/dorian/projects/SI5/Archi-Logicielle/elderspy/gateway/include
   OBJECT_DIR = CMakeFiles/gateway.dir
   OBJECT_FILE_DIR = CMakeFiles/gateway.dir/src
@@ -78,7 +78,7 @@ build CMakeFiles/gateway.dir/src/tcp_handler.cpp.o: CXX_COMPILER__gateway_unscan
 #############################################
 # Link the executable build/gateway
 
-build build/gateway: CXX_EXECUTABLE_LINKER__gateway_Debug CMakeFiles/gateway.dir/src/main.cpp.o CMakeFiles/gateway.dir/src/nanomq_client.cpp.o CMakeFiles/gateway.dir/src/tcp_handler.cpp.o
+build build/gateway: CXX_EXECUTABLE_LINKER__gateway_Debug CMakeFiles/gateway.dir/src/main.cpp.o CMakeFiles/gateway.dir/src/mqtt_client.cpp.o CMakeFiles/gateway.dir/src/tcp_handler.cpp.o
   FLAGS = -Wall -g
   LINK_LIBRARIES = -lpaho-mqttpp3  -lpaho-mqtt3as  -lamqpcpp  -lpthread  -ldl
   OBJECT_DIR = CMakeFiles/gateway.dir
