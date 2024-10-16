@@ -1,5 +1,7 @@
 #include <iostream>
 #include <mqtt/async_client.h>
+#include "mqtt_client.h"
+#include "tcp_handler.h"
 
 using namespace std;
 
@@ -27,39 +29,36 @@ public:
 };
 
 int main() {
-    mqtt::async_client client(SERVER_ADDRESS, CLIENT_ID);
-    callback cb;
-    client.set_callback(cb);
-
-    mqtt::connect_options connOpts;
-    connOpts.set_clean_session(true);
+    MqttClient mqttClient(SERVER_ADDRESS, CLIENT_ID);
 
     try {
-        cout << "Connecting to the NanoMQ server..." << endl;
-        client.connect(connOpts)->wait();
-        cout << "Connected to NanoMQ!" << endl;
+        mqttClient.connect();
+        mqttClient.subscribe(TOPIC, QOS);
+        mqttClient.publish(TOPIC, PAYLOAD, QOS);
 
-        cout << "Subscribing to topic: " << TOPIC << endl;
-        client.subscribe(TOPIC, QOS);
-
-        cout << "Publishing message to NanoMQ: " << PAYLOAD << endl;
-        mqtt::message_ptr pubmsg = mqtt::make_message(TOPIC, PAYLOAD);
-        pubmsg->set_qos(QOS);
-        client.publish(pubmsg)->wait();
-
-
-
-        this_thread::sleep_for(chrono::seconds(1));
-        // Keep the client alive to receive messages
-        cout << "Waiting for messages... (Press Ctrl+C to exit)" << endl;
-        while (true) {
-            this_thread::sleep_for(chrono::seconds(1));
-        }
+        mqttClient.wait_for_messages(); // Keep the client alive
     }
     catch (const mqtt::exception& exc) {
-        cerr << "Error: " << exc.what() << endl;
+        cerr << "MQTT error: " << exc.what() << endl;
         return 1;
     }
+
+    // // create an instance of your own tcp handler
+    // TcpHandler myHandler;
+    //
+    // // address of the server
+    // AMQP::Address address("amqp://guest:guest@localhost/vhost");
+    //
+    // // create a AMQP connection object
+    // AMQP::TcpConnection connection(&myHandler, address);
+    //
+    // // and create a channel
+    // AMQP::TcpChannel channel(&connection);
+    //
+    // // use the channel object to call the AMQP method you like
+    // channel.declareExchange("my-exchange", AMQP::fanout);
+    // channel.declareQueue("my-queue");
+    // channel.bindQueue("my-exchange", "my-queue", "my-routing-key");
 
     return 0;
 }
