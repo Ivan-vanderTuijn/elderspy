@@ -9,6 +9,7 @@ services:
       - "8883:8883"    # Secure MQTT over SSL/TLS
     volumes:
       - ./nanomq.conf:/etc/nanomq.conf  # Mount your NanoMQ configuration
+      - ./data:/tmp/sqlite_rule_all.db
     networks:
       - iot_network
 

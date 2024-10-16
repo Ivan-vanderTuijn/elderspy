@@ -1,0 +1,7 @@
+# ninja log v6
+1	985	1729066996897155758	CMakeFiles/gateway.dir/src/tcp_handler.cpp.o	5a6e51fc9ded6c37
+1	1000	1729066996897155758	CMakeFiles/gateway.dir/src/mqtt_client.cpp.o	e55fa017789eb07
+1	1341	1729066996897155758	CMakeFiles/gateway.dir/src/main.cpp.o	9986f3561bd78b7b
+1341	1416	1729066998237142367	build/gateway	749ca905033528ab
+2	1363	1729068275283121600	CMakeFiles/gateway.dir/src/main.cpp.o	9986f3561bd78b7b
+1363	1441	1729068276645137504	build/gateway	749ca905033528ab
