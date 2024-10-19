@@ -15,6 +15,8 @@ const string TOPIC("house/1/temp/");
 const int QOS = 1;
 const string PAYLOAD("Payload de test");
 
+
+// Callback class for MQTT client (only to test)
 class callback : public virtual mqtt::callback {
 public:
     void connected(const string &cause) override {
@@ -32,14 +34,26 @@ public:
 };
 
 int main() {
-    TelemetryDB &db = TelemetryDB::getInstance();
-    vector<vector<string> > telemetry_data = db.getAllTelemetryData(TABLE_NAME);
-    for (const auto &row: telemetry_data) {
+    TelemetryDB &telemetryDB = TelemetryDB::getInstance();
+
+    // Log tables content using the TelemetryDB singleton
+
+    auto houseTemperatureData = telemetryDB.getHouseTemperature();
+    for (const auto &row: houseTemperatureData) {
         for (const auto &col: row) {
-            cout << col << " ";
+            std::cout << col << " ";
         }
-        cout << endl;
+        std::cout << std::endl;
     }
+
+    auto heartRateData = telemetryDB.getHeartRate();
+    for (const auto &row: heartRateData) {
+        for (const auto &col: row) {
+            std::cout << col << " ";
+        }
+        std::cout << std::endl;
+    }
+
     // MqttClient mqttClient(SERVER_ADDRESS, CLIENT_ID);
     //
     // try {

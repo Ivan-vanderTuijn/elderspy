@@ -25,6 +25,9 @@ private:
     // Static callback function for query execution
     static int callback(void *data, int argc, char **argv, char **azColName);
 
+    // Helper method to execute a SQL query
+    std::vector<std::vector<std::string> > executeQuery(const std::string &query);
+
 public:
     // Destructor to close the database connection
     ~TelemetryDB();
@@ -32,8 +35,10 @@ public:
     // Static method to get the singleton instance
     static TelemetryDB &getInstance();
 
-    // Method to query the telemetry table
-    std::vector<std::vector<std::string> > getAllTelemetryData(const std::string &table_name);
+    // Method to query specific telemetry data
+    std::vector<std::vector<std::string> > getHouseTemperature();
+
+    std::vector<std::vector<std::string> > getHeartRate();
 
     // Close the database
     void close();

@@ -34,14 +34,13 @@ int TelemetryDB::callback(void *data, int argc, char **argv, char **azColName) {
     return 0;
 }
 
-// Method to get the whole result of a query
-vector<vector<string> > TelemetryDB::getAllTelemetryData(const string &table_name) {
+// Helper method to execute queries
+vector<vector<string> > TelemetryDB::executeQuery(const string &query) {
     vector<vector<string> > results;
     sqlite3_stmt *stmt;
-    string sqlQuery = "SELECT * FROM " + table_name;
 
     // Prepare the SQL statement
-    if (sqlite3_prepare_v2(db, sqlQuery.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+    if (sqlite3_prepare_v2(db, query.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << endl;
         return results; // Return empty results if failed
     }
@@ -49,18 +48,14 @@ vector<vector<string> > TelemetryDB::getAllTelemetryData(const string &table_nam
     // Loop through the result set row by row
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         vector<string> row;
-
-        // Get the number of columns in the current row
         int num_cols = sqlite3_column_count(stmt);
 
         // Loop through each column in the row
         for (int i = 0; i < num_cols; i++) {
-            // Get the column value as a string
             const char *colValue = reinterpret_cast<const char *>(sqlite3_column_text(stmt, i));
             row.push_back(colValue ? colValue : "NULL");
         }
 
-        // Add the row to the results vector
         results.push_back(row);
     }
 
@@ -68,6 +63,16 @@ vector<vector<string> > TelemetryDB::getAllTelemetryData(const string &table_nam
     sqlite3_finalize(stmt);
 
     return results;
+}
+
+// Method to get house temperature data
+vector<vector<string> > TelemetryDB::getHouseTemperature() {
+    return executeQuery("SELECT payload FROM house_temperature");
+}
+
+// Method to get heart rate data
+vector<vector<string> > TelemetryDB::getHeartRate() {
+    return executeQuery("SELECT payload FROM heart_rate");
 }
 
 
