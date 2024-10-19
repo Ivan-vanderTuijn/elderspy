@@ -3,6 +3,7 @@ package com.polytech.service;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
 import com.influxdb.client.WriteApi;
+import com.influxdb.client.WriteApiBlocking;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import com.polytech.model.TelemetryData;
@@ -16,7 +17,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @Slf4j
 @ApplicationScoped
 public class IngestionService {
-    @ConfigProperty(name = "influxdb.url", defaultValue = "http://localhost:8086")
+    @ConfigProperty(name = "influxdb.url", defaultValue = "http://influxdb:8086")
     String influxdbUrl;
 
     @ConfigProperty(name = "influxdb.token", defaultValue = "my-super-secret-auth-token")
@@ -36,7 +37,7 @@ public class IngestionService {
 
     @PostConstruct
     void init() {
-        log.info("Creating InfluxDB client");
+        log.info("Creating InfluxDB client with URL: {}, Org: {}, Bucket: {}, Token: {}", influxdbUrl, influxdbOrg, influxdbBucket, influxdbToken);
         influxDBClient = InfluxDBClientFactory.create(
                 influxdbUrl,
                 influxdbToken.toCharArray()
@@ -52,13 +53,14 @@ public class IngestionService {
     }
 
     public void storeTelemetryData(TelemetryData data) {
-        try (WriteApi writeApi = influxDBClient.makeWriteApi()) {
+        try {
             Point point = Point.measurement(data.getMeasurement())
                     .addTag("edgeId", data.getDeviceId())
                     .addTag("deviceId", data.getEdgeId())
                     .addField("value", data.getValue())
                     .time(data.getTimestamp(), WritePrecision.MS);
 
+            WriteApiBlocking writeApi = influxDBClient.getWriteApiBlocking();
             writeApi.writePoint(influxdbBucket, influxdbOrg, point);
             log.info("Successfully stored telemetry data for device {} {}", data.getDeviceId(), data);
         } catch (Exception e) {

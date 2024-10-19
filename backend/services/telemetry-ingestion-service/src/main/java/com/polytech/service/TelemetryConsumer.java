@@ -1,6 +1,7 @@
 package com.polytech.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.polytech.model.TelemetryData;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.reactive.messaging.mqtt.MqttMessage;
@@ -14,10 +15,12 @@ public class TelemetryConsumer {
 
     private final IngestionService ingestionService;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper mapper = new ObjectMapper();
+
 
     public TelemetryConsumer(IngestionService ingestionService) {
         this.ingestionService = ingestionService;
+        mapper.registerModule(new JavaTimeModule()); // To handle Instant deserialization
     }
 
     @Incoming("telemetry-channel")
@@ -26,7 +29,7 @@ public class TelemetryConsumer {
                 .onItem().transform(msg -> new String(msg.getPayload()))
                 .onItem().transform(payload -> {
                     try {
-                        return objectMapper.readValue(payload, TelemetryData.class);
+                        return mapper.readValue(payload, TelemetryData.class);
                     } catch (Exception e) {
                         log.error("Error deserializing MQTT message", e);
                         throw new RuntimeException("Error processing MQTT message", e);

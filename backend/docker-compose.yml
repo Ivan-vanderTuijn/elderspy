@@ -56,8 +56,8 @@ services:
 
   telemetry-client:
     build:
-      context: ./backend/services
-      dockerfile: ./telemetry-client/src/main/docker/Dockerfile.jvm
+      context: ./services
+      dockerfile: telemetry-client/src/main/docker/Dockerfile.jvm
     container_name: telemetry-client
     ports:
       - "9900:9900"
@@ -74,8 +74,8 @@ services:
 
   telemetry-ingestion-service:
     build:
-      context: ./backend/services
-      dockerfile: ./telemetry-ingestion-service/src/main/docker/Dockerfile.jvm
+      context: ./services
+      dockerfile: telemetry-ingestion-service/src/main/docker/Dockerfile.jvm
     container_name: telemetry-ingestion-service
     ports:
       - "9901:9901"
@@ -97,8 +97,8 @@ services:
 
   telemetry-analyser-service:
     build:
-      context: ./backend/services
-      dockerfile: ./telemetry-analyser-service/src/main/docker/Dockerfile.jvm
+      context: ./services
+      dockerfile: telemetry-analyser-service/src/main/docker/Dockerfile.jvm
     container_name: telemetry-analyser-service
     ports:
       - "9902:9902"
@@ -115,8 +115,8 @@ services:
 
   alerting-service:
     build:
-      context: ./backend/services
-      dockerfile: ./alerting-service/src/main/docker/Dockerfile.jvm
+      context: ./services
+      dockerfile: alerting-service/src/main/docker/Dockerfile.jvm
     container_name: alerting-service
     ports:
       - "9903:9903"
@@ -126,8 +126,8 @@ services:
 
   gsm-gateway:
     build:
-      context: ./backend/services
-      dockerfile: ./gsm-gateway/src/main/docker/Dockerfile.jvm
+      context: ./services
+      dockerfile: gsm-gateway/src/main/docker/Dockerfile.jvm
     container_name: gsm-gateway
     ports:
       - "9904:9904"
