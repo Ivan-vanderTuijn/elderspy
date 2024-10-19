@@ -87,13 +87,13 @@ WORKDIR /build
 
 # Copy the parent POM and create a temporary POM without the telemetry-client module
 COPY --chown=185 ./pom.xml /build/pom.xml
-RUN sed -i '/<module>/!b;/<module>\(common\|telemetry-analyser-service\)<\/module>/!d' /build/pom.xml
+RUN sed '/<module>/!b;/<module>\(common\|telemetry-analyser-service\)<\/module>/!d' /build/pom.xml > /build/pom-temp.xml && mv /build/pom-temp.xml /build/pom.xml
 
 # Copy only the necessary modules
 COPY --chown=185 ./common /build/common
 COPY --chown=185 ./telemetry-analyser-service /build/telemetry-analyser-service
 
-RUN mvn clean package -DskipTests -X
+RUN mvn clean package  -DskipTests -X
 
 FROM registry.access.redhat.com/ubi8/openjdk-17:1.20
 

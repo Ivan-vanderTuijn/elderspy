@@ -62,10 +62,10 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- RabbitMQ client -->
+        <!-- RabbitMQ MQTT client -->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-messaging-rabbitmq</artifactId>
+            <artifactId>quarkus-messaging-mqtt</artifactId>
         </dependency>
 
         <!-- InfluxDB client -->

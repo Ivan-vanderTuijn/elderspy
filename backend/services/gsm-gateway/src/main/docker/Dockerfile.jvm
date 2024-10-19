@@ -87,7 +87,7 @@ WORKDIR /build
 
 # Copy the parent POM and create a temporary POM without the telemetry-client module
 COPY --chown=185 ./pom.xml /build/pom.xml
-RUN sed -i '/<module>/!b;/<module>\(common\|gsm-gateway\)<\/module>/!d' /build/pom.xml
+RUN sed '/<module>/!b;/<module>\(common\|gsm-gateway\)<\/module>/!d' /build/pom.xml > /build/pom-temp.xml && mv /build/pom-temp.xml /build/pom.xml
 
 # Copy only the necessary modules
 COPY --chown=185 ./common /build/common

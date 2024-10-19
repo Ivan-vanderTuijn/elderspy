@@ -37,12 +37,15 @@ services:
     container_name: rabbitmq
     ports:
       - "5672:5672"  # AMQP protocol port
+      - "1883:1883"  # MQTT protocol port
       - "15672:15672"  # Management UI port
     depends_on:
       - influxdb
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin123
+    volumes:
+      - ./rabbitmq/rabbitmq_enabled_plugins:/etc/rabbitmq/enabled_plugins
     networks:
       - elder-spy-network
     healthcheck:

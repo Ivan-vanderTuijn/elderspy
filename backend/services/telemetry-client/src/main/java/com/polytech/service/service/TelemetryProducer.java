@@ -3,6 +3,7 @@ package com.polytech.service.service;
 import com.polytech.model.TelemetryData;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.subscription.Cancellable;
+import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ public class TelemetryProducer {
     // Inject an emitter to send messages to the "telemetry-out" channel
     @Inject
     @Channel("telemetry-channel")
-    Emitter<TelemetryData> telemetryEmitter;
+    Emitter<String> telemetryEmitter;
 
     private final Random random = new Random();
 
@@ -31,9 +32,10 @@ public class TelemetryProducer {
     }
 
     // Method to send a single telemetry reading
+
     public void sendTelemetryData(TelemetryData data) {
-        log.info("Sending telemetry data: {}", data);
-        telemetryEmitter.send(data);
+        String jsonPayload = JsonObject.mapFrom(data).encode();
+        telemetryEmitter.send(jsonPayload);
     }
 
     // Method to simulate continuous telemetry readings
@@ -55,7 +57,7 @@ public class TelemetryProducer {
 
         Cancellable cancellable = generateTelemetryData(deviceId)
                 .subscribe().with(
-                        data -> telemetryEmitter.send(data),
+                        data -> sendTelemetryData(data),
                         throwable -> log.error("Error in continuous telemetry", throwable)
                 );
 
