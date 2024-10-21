@@ -55,9 +55,9 @@ public class IngestionService {
     public void storeTelemetryData(TelemetryData data) {
         try {
             Point point = Point.measurement(data.getMeasurement())
-                    .addTag("edgeId", data.getDeviceId())
-                    .addTag("deviceId", data.getEdgeId())
-                    .addField("value", data.getValue())
+                    .addTag("edgeId", data.getEdgeId())
+                    .addTag("deviceId", data.getDeviceId())
+                    .addField("celsius", data.getValue())
                     .time(data.getTimestamp(), WritePrecision.MS);
 
             WriteApiBlocking writeApi = influxDBClient.getWriteApiBlocking();

@@ -11,7 +11,7 @@ services:
       - grafana-data:/var/lib/grafana
       - ./grafana-provisioning:/etc/grafana/provisioning
     depends_on:
-      - telemetry-ingestion-service
+      - telemetry-ingestion-ms
     networks:
       - elder-spy-network
 
@@ -54,11 +54,11 @@ services:
       timeout: 10s
       retries: 5
 
-  telemetry-client:
+  telemetry-client-ms:
     build:
       context: ./services
       dockerfile: telemetry-client/src/main/docker/Dockerfile.jvm
-    container_name: telemetry-client
+    container_name: telemetry-client-ms
     ports:
       - "9900:9900"
     depends_on:
@@ -72,11 +72,11 @@ services:
       - elder-spy-network
     restart: on-failure
 
-  telemetry-ingestion-service:
+  telemetry-ingestion-ms:
     build:
       context: ./services
       dockerfile: telemetry-ingestion-service/src/main/docker/Dockerfile.jvm
-    container_name: telemetry-ingestion-service
+    container_name: telemetry-ingestion-ms
     ports:
       - "9901:9901"
     depends_on:
@@ -95,11 +95,11 @@ services:
       - elder-spy-network
     restart: on-failure
 
-  telemetry-analyser-service:
+  telemetry-analyser-ms:
     build:
       context: ./services
       dockerfile: telemetry-analyser-service/src/main/docker/Dockerfile.jvm
-    container_name: telemetry-analyser-service
+    container_name: telemetry-analyser-ms
     ports:
       - "9902:9902"
     depends_on:
@@ -113,26 +113,26 @@ services:
       - elder-spy-network
     restart: on-failure
 
-  alerting-service:
+  alerting-ms:
     build:
       context: ./services
       dockerfile: alerting-service/src/main/docker/Dockerfile.jvm
-    container_name: alerting-service
+    container_name: alerting-ms
     ports:
       - "9903:9903"
     networks:
       - elder-spy-network
     restart: on-failure
 
-  gsm-gateway:
+  gsm-gateway-ms:
     build:
       context: ./services
       dockerfile: gsm-gateway/src/main/docker/Dockerfile.jvm
-    container_name: gsm-gateway
+    container_name: gsm-gateway-ms
     ports:
       - "9904:9904"
     depends_on:
-      - alerting-service
+      - alerting-ms
     environment:
       - ALERTING_SERVICE_HOST=alerting-service
       - ALERTING_SERVICE_PORT=9903
