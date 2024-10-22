@@ -5,6 +5,7 @@
 ```
 sudo apt install libssl-dev
 sudo apt install cmake
+sudo apt-get install libsqlite3-dev
 ```
 
 

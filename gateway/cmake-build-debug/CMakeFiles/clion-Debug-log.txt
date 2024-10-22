@@ -1,4 +1,4 @@
-/home/dorian/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/dorian/.local/share/JetBrains/Toolbox/apps/clion/bin/ninja/linux/x64/ninja -G Ninja -S /home/dorian/projects/SI5/Archi-Logicielle/elderspy/gateway -B /home/dorian/projects/SI5/Archi-Logicielle/elderspy/gateway/cmake-build-debug
--- Configuring done (0.0s)
--- Generating done (0.0s)
--- Build files have been written to: /home/dorian/projects/SI5/Archi-Logicielle/elderspy/gateway/cmake-build-debug
+/usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" -S /mnt/c/Users/Julien/Documents/POPO/S9/elderspy/gateway -B /mnt/c/Users/Julien/Documents/POPO/S9/elderspy/gateway/cmake-build-debug
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /mnt/c/Users/Julien/Documents/POPO/S9/elderspy/gateway/cmake-build-debug
