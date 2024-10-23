@@ -24,6 +24,7 @@ hs_err_pid*
 replay_pid*
 
 gateway/build
-gateway/.idea
+/gateway/.idea
+/gateway/cmake-build-debug
 gateway/data
-gateway/cmake-build-debug
+

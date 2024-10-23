@@ -1,3 +1,0 @@
-/mnt/c/Users/Julien/Documents/POPO/S9/elderspy/gateway/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/mnt/c/Users/Julien/Documents/POPO/S9/elderspy/gateway/cmake-build-debug/CMakeFiles/edit_cache.dir
-/mnt/c/Users/Julien/Documents/POPO/S9/elderspy/gateway/cmake-build-debug/CMakeFiles/gateway.dir
