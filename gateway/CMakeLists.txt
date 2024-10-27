@@ -19,11 +19,34 @@ file(GLOB SRC_FILES "${SRC_DIR}/*.cpp")
 
 # Set the target output executable name (without directory)
 add_executable(gateway ${SRC_FILES}
-        include/mqtt_client.h)
+        include/mqtt_client.h
+        include/telemetry_db.h
+        include/global.h
+        include/IotMqttClient.h
+        include/alertManager.h
+        include/sensors_config.h
+        src/sensors_config.cpp
+        include/backend_mqtt_client.h
+        include/telemetry_data.h)
 
 # Specify output directory for the executable
 set_target_properties(gateway PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR})
 
+# Find OpenSSL
+find_package(OpenSSL REQUIRED)
+
+# Find cpprestsdk
+find_package(cpprestsdk REQUIRED)
+
 # Link libraries
-target_link_libraries(gateway paho-mqttpp3 paho-mqtt3as amqpcpp pthread dl)
+target_link_libraries(gateway
+        paho-mqttpp3
+        paho-mqtt3as
+        amqpcpp
+        pthread
+        dl
+        sqlite3
+        cpprestsdk::cpprest
+        OpenSSL::SSL
+        OpenSSL::Crypto) # Link OpenSSL libraries
