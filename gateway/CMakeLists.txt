@@ -25,7 +25,9 @@ add_executable(gateway ${SRC_FILES}
         include/IotMqttClient.h
         include/alertManager.h
         include/sensors_config.h
-        src/sensors_config.cpp)
+        src/sensors_config.cpp
+        include/backend_mqtt_client.h
+        include/telemetry_data.h)
 
 # Specify output directory for the executable
 set_target_properties(gateway PROPERTIES
