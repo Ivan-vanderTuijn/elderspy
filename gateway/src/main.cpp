@@ -1,74 +1,36 @@
 #include <iostream>
-#include <mqtt/async_client.h>
-#include "mqtt_client.h"
-#include "telemetry_db.h"
+#include <csignal>
+#include <chrono>
+#include "IotMqttClient.h"
+#include "alertManager.h"
+#include "global.h"
 
-#include "tcp_handler.h"
+volatile std::sig_atomic_t stop;
 
-using namespace std;
-
-const string SERVER_ADDRESS("tcp://localhost:1883"); //Le port par défaut mqtt de NanoMQ est 1883
-const string CLIENT_ID("gateway");
-const string TOPIC("house/1/temp/");
-
-
-const int QOS = 1;
-const string PAYLOAD("Payload de test");
-
-
-// Callback class for MQTT client (only to test)
-class callback : public virtual mqtt::callback {
-public:
-    void connected(const string &cause) override {
-        cout << "\nConnected to NanoMQ: " << cause << endl;
-    }
-
-    void message_arrived(mqtt::const_message_ptr msg) override {
-        cout << "\nMessage arrived on topic: " << msg->get_topic() << endl;
-        cout << "Payload: " << msg->to_string() << endl;
-    }
-
-    void delivery_complete(mqtt::delivery_token_ptr token) override {
-        cout << "\nDelivery complete for token: " << (token ? token->get_message_id() : -1) << endl;
-    }
-};
+void handle_signal(int signal) {
+    stop = 1;
+}
 
 int main() {
-    TelemetryDB &telemetryDB = TelemetryDB::getInstance();
+    AlertManager alertManager = AlertManager("http://backend_url:8080");
+    IoTMqttClient mqttClient(GATEWAY_BROKER_ADDRESS, GATEWAY_CLIENT_ID, alertManager);
 
-    // Log tables content using the TelemetryDB singleton
+    // Set up signal handling for clean exit
+    std::signal(SIGINT, handle_signal); // Handle Ctrl+C
 
-    auto houseTemperatureData = telemetryDB.getHouseTemperature();
-    for (const auto &row: houseTemperatureData) {
-        for (const auto &col: row) {
-            std::cout << col << " ";
+    try {
+        mqttClient.subscribeToAllSensors(); // Subscribe to all sensor topics
+
+        std::cout << "IoT Client running. Press Ctrl+C to exit." << std::endl;
+
+        while (!stop) {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
-        std::cout << std::endl;
+    } catch (const std::exception &e) {
+        std::cerr << "Error: " << e.what() << std::endl;
     }
 
-    auto heartRateData = telemetryDB.getHeartRate();
-    for (const auto &row: heartRateData) {
-        for (const auto &col: row) {
-            std::cout << col << " ";
-        }
-        std::cout << std::endl;
-    }
-
-    // MqttClient mqttClient(SERVER_ADDRESS, CLIENT_ID);
-    //
-    // try {
-    //     mqttClient.connect();
-    //     mqttClient.subscribe(TOPIC, QOS);
-    //     mqttClient.publish(TOPIC, PAYLOAD, QOS);
-    //
-    //     mqttClient.wait_for_messages(); // Keep the client alive
-    // }
-    // catch (const mqtt::exception& exc) {
-    //     cerr << "MQTT error: " << exc.what() << endl;
-    //     return 1;
-    // }
-
+    std::cout << "Shutting down..." << std::endl;
 
     return 0;
 }
-

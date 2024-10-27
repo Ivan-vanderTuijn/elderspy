@@ -5,9 +5,10 @@
 
 using namespace std;
 
-MqttClient::MqttClient(const string& address, const string& clientId)
+MqttClient::MqttClient(const string &address, const string &clientId)
     : client(address, clientId) {
     client.set_callback(*this);
+    connect();
 }
 
 void MqttClient::connect() {
@@ -18,42 +19,50 @@ void MqttClient::connect() {
         cout << "Connecting to the NanoMQ server..." << endl;
         client.connect(connOpts)->wait();
         cout << "Connected to NanoMQ!" << endl;
-    }
-    catch (const mqtt::exception& exc) {
+    } catch (const mqtt::exception &exc) {
         cerr << "Error: " << exc.what() << endl;
         throw;
     }
 }
 
-void MqttClient::subscribe(const string& topic, int qos) {
+void MqttClient::subscribe(const string &topic, int qos) {
     try {
         cout << "Subscribing to topic: " << topic << endl;
         client.subscribe(topic, qos)->wait();
-    }
-    catch (const mqtt::exception& exc) {
+    } catch (const mqtt::exception &exc) {
         cerr << "Error during subscription: " << exc.what() << endl;
     }
 }
 
-void MqttClient::publish(const string& topic, const string& payload, int qos) {
+void MqttClient::publish(const string &topic, const string &payload, int qos) {
     try {
         cout << "Publishing message to NanoMQ: " << payload << endl;
         mqtt::message_ptr pubmsg = mqtt::make_message(topic, payload);
         pubmsg->set_qos(qos);
         client.publish(pubmsg)->wait();
-    }
-    catch (const mqtt::exception& exc) {
+    } catch (const mqtt::exception &exc) {
         cerr << "Error during publish: " << exc.what() << endl;
     }
 }
 
-void MqttClient::connected(const string& cause) {
+void MqttClient::connected(const string &cause) {
     cout << "\nConnected to NanoMQ: " << cause << endl;
 }
 
 void MqttClient::message_arrived(mqtt::const_message_ptr msg) {
-    cout << "\nMessage arrived on topic: " << msg->get_topic() << endl;
-    cout << "Payload: " << msg->to_string() << endl;
+    string topic = msg->get_topic();
+    string payload = msg->to_string();
+
+    cout << "\nMessage arrived on topic: " << topic << endl;
+    cout << "Payload: " << payload << endl;
+
+    if (topic == "sensor/house_temperature") {
+        cout << "Handling temperature data: " << payload << endl;
+    } else if (topic == "sensor/heart_rate") {
+        cout << "Handling heart rate data: " << payload << endl;
+    } else {
+        cout << "Received message on unhandled topic: " << topic << endl;
+    }
 }
 
 void MqttClient::delivery_complete(mqtt::delivery_token_ptr token) {
