@@ -4,8 +4,8 @@
 
 #ifndef BACKEND_MQTT_CLIENT_H
 #define BACKEND_MQTT_CLIENT_H
-#include "mqtt_client.h"
-#include "telemetry_data.h"
+#include "mqtt_clients/mqtt_client.h"
+#include "structs/telemetry_data.h"
 
 
 class BackendMqttClient : public MqttClient {

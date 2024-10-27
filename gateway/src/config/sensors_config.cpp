@@ -1,4 +1,4 @@
-#include "sensors_config.h"
+#include "config/sensors_config.h"
 
 // Define the sensor configurations
 const std::unordered_map<SensorType, SensorConfig> sensorConfigs = {

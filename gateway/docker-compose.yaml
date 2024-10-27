@@ -4,7 +4,7 @@ services:
 
     container_name: nanomq
     ports:
-      - "1883:1883"    # MQTT
+      - "1884:1883"    # MQTT
       - "8083:8083"    # WebSockets
       - "8883:8883"    # Secure MQTT over SSL/TLS
     volumes:
@@ -13,7 +13,7 @@ services:
     networks:
       - iot_network
 
-  nodered :
+  nodered:
     build: ../sensors
     image: nodered/node-red
     environment:

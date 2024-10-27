@@ -1,7 +1,7 @@
 #ifndef ALERTMANAGER_H
 #define ALERTMANAGER_H
 
-#include "sensors_config.h"
+#include "config/sensors_config.h"
 #include <string>
 #include <map>
 #include <cpprest/http_client.h>  // Requires C++ REST SDK or a similar HTTP library

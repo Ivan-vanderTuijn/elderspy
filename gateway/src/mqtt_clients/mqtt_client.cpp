@@ -1,4 +1,4 @@
-#include "mqtt_client.h"
+#include "mqtt_clients/mqtt_client.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -17,6 +17,8 @@ void MqttClient::connect() {
 
     try {
         cout << "Connecting to the NanoMQ server..." << endl;
+        cout << "Address: " << client.get_server_uri() << endl;
+        cout << "Client ID: " << client.get_client_id() << endl;
         client.connect(connOpts)->wait();
         cout << "Connected to NanoMQ!" << endl;
     } catch (const mqtt::exception &exc) {

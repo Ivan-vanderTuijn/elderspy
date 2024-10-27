@@ -19,15 +19,19 @@ file(GLOB SRC_FILES "${SRC_DIR}/*.cpp")
 
 # Set the target output executable name (without directory)
 add_executable(gateway ${SRC_FILES}
-        include/mqtt_client.h
+        include/alert/alert_manager.h
+        include/config/global.h
+        include/config/sensors_config.h
+        include/mqtt_clients/backend_mqtt_client.h
+        include/mqtt_clients/gateway_mqtt_client.h
+        include/structs/telemetry_data.h
         include/telemetry_db.h
-        include/global.h
-        include/IotMqttClient.h
-        include/alertManager.h
-        include/sensors_config.h
-        src/sensors_config.cpp
-        include/backend_mqtt_client.h
-        include/telemetry_data.h)
+        src/alert/alert_manager.cpp
+        src/config/sensors_config.cpp
+        src/mqtt_clients/backend_mqtt_client.cpp
+        src/mqtt_clients/gateway_mqtt_client.cpp
+        src/mqtt_clients/mqtt_client.cpp
+)
 
 # Specify output directory for the executable
 set_target_properties(gateway PROPERTIES

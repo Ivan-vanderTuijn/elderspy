@@ -1,4 +1,4 @@
-#include "alertManager.h"
+#include "alert/alert_manager.h"
 #include <iostream>
 #include <stdexcept>
 #include <cpprest/http_client.h>

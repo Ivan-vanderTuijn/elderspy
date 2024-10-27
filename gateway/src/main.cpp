@@ -1,9 +1,9 @@
 #include <iostream>
 #include <csignal>
 #include <chrono>
-#include "IotMqttClient.h"
-#include "alertManager.h"
-#include "global.h"
+#include "mqtt_clients/gateway_mqtt_client.h"
+#include "alert/alert_manager.h"
+#include "config/global.h"
 
 volatile std::sig_atomic_t stop;
 
@@ -13,7 +13,7 @@ void handle_signal(int signal) {
 
 int main() {
     AlertManager alertManager = AlertManager("http://backend_url:8080");
-    IoTMqttClient mqttClient(GATEWAY_BROKER_ADDRESS, GATEWAY_CLIENT_ID, alertManager);
+    GatawayMqttClient mqttClient(GATEWAY_BROKER_ADDRESS, GATEWAY_CLIENT_ID, alertManager);
 
     // Set up signal handling for clean exit
     std::signal(SIGINT, handle_signal); // Handle Ctrl+C
