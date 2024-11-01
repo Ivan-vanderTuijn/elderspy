@@ -1,6 +1,6 @@
 services:
   nanomq:
-    image: emqx/nanomq:latest-full
+    image: emqx/nanomq:latest
 
     container_name: nanomq
     ports:
@@ -9,7 +9,6 @@ services:
       - "8883:8883"    # Secure MQTT over SSL/TLS
     volumes:
       - ./nanomq.conf:/etc/nanomq.conf  # Mount your NanoMQ configuration
-      - ./data:/tmp
     networks:
       - iot_network
 

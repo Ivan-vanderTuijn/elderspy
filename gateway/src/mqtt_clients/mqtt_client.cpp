@@ -1,7 +1,6 @@
-#include "mqtt_clients/mqtt_client.h"
-#include <iostream>
 #include <thread>
 #include <chrono>
+#include <mqtt_clients/mqtt_client.h>
 
 using namespace std;
 
@@ -9,6 +8,10 @@ MqttClient::MqttClient(const string &address, const string &clientId)
     : client(address, clientId) {
     client.set_callback(*this);
     connect();
+}
+
+MqttClient::~MqttClient() {
+    disconnect();
 }
 
 void MqttClient::connect() {
@@ -24,6 +27,15 @@ void MqttClient::connect() {
     } catch (const mqtt::exception &exc) {
         cerr << "Error: " << exc.what() << endl;
         throw;
+    }
+}
+
+void MqttClient::disconnect() {
+    try {
+        client.disconnect()->wait();
+        cout << "Disconnected from NanoMQ." << endl;
+    } catch (const mqtt::exception &exc) {
+        cerr << "Error during disconnection: " << exc.what() << endl;
     }
 }
 
@@ -47,9 +59,23 @@ void MqttClient::publish(const string &topic, const string &payload, int qos) {
     }
 }
 
-void MqttClient::connected(const string &cause) {
-    cout << "\nConnected to NanoMQ: " << cause << endl;
+int MqttClient::add_message_callback(MessageCallback cb) {
+    lock_guard<mutex> lock(callback_mutex);
+    int id = next_callback_id++;
+    message_callbacks[id] = move(cb);
+    return id;
 }
+
+void MqttClient::update_message_callback(int id, MessageCallback cb) {
+    lock_guard<mutex> lock(callback_mutex);
+    message_callbacks[id] = move(cb);
+}
+
+void MqttClient::remove_message_callback(int id) {
+    lock_guard<mutex> lock(callback_mutex);
+    message_callbacks.erase(id);
+}
+
 
 void MqttClient::message_arrived(mqtt::const_message_ptr msg) {
     string topic = msg->get_topic();
@@ -65,15 +91,16 @@ void MqttClient::message_arrived(mqtt::const_message_ptr msg) {
     } else {
         cout << "Received message on unhandled topic: " << topic << endl;
     }
+
+    // Call registered message callbacks
+    lock_guard<mutex> lock(callback_mutex);
+    for (const auto &[id, cb]: message_callbacks) {
+        if (cb) {
+            cb(msg);
+        }
+    }
 }
 
 void MqttClient::delivery_complete(mqtt::delivery_token_ptr token) {
     cout << "\nDelivery complete for token: " << (token ? token->get_message_id() : -1) << endl;
-}
-
-void MqttClient::wait_for_messages() {
-    cout << "Waiting for messages... (Press Ctrl+C to exit)" << endl;
-    while (true) {
-        this_thread::sleep_for(chrono::seconds(1));
-    }
 }

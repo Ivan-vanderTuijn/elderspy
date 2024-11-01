@@ -1,6 +1,8 @@
 #include <iostream>
 #include <csignal>
 #include <chrono>
+
+#include "sensors_data_storer.h"
 #include "mqtt_clients/gateway_mqtt_client.h"
 #include "alert/alert_manager.h"
 #include "config/global.h"
@@ -12,15 +14,14 @@ void handle_signal(int signal) {
 }
 
 int main() {
-    AlertManager alertManager = AlertManager("http://backend_url:8080");
-    GatawayMqttClient mqttClient(GATEWAY_BROKER_ADDRESS, GATEWAY_CLIENT_ID, alertManager);
+    MqttClient mqttClient(GATEWAY_BROKER_ADDRESS, GATEWAY_CLIENT_ID);
+    // AlertManager alertManager = AlertManager("http://backend_url:8080");
+    SensorsDataStorer sensorsDataStorer = SensorsDataStorer(mqttClient);
 
     // Set up signal handling for clean exit
     std::signal(SIGINT, handle_signal); // Handle Ctrl+C
 
     try {
-        mqttClient.subscribeToAllSensors(); // Subscribe to all sensor topics
-
         std::cout << "IoT Client running. Press Ctrl+C to exit." << std::endl;
 
         while (!stop) {

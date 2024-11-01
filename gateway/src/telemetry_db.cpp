@@ -1,5 +1,7 @@
 #include "../include/telemetry_db.h"
 
+#include "config/sensors_config.h"
+
 using namespace std;
 
 // Private constructor to enforce the singleton pattern
@@ -9,6 +11,7 @@ TelemetryDB::TelemetryDB(const string &path) : db(nullptr), db_path(path) {
     } else {
         cout << "Connected to database: " << db_path << endl;
     }
+    createTablesIfNotExist();
 }
 
 // Destructor to close the database connection
@@ -32,6 +35,33 @@ int TelemetryDB::callback(void *data, int argc, char **argv, char **azColName) {
     }
     printf("\n");
     return 0;
+}
+
+void TelemetryDB::createTablesIfNotExist() const {
+    // Iterate over sensorConfigs and create tables if they don't exist
+    for (const auto &entry: sensorConfigs) {
+        const auto &config = entry.second;
+        string createTableQuery;
+
+        //get the name from the topic 
+        string topic = config.topic;
+        string tableName = topic.substr(topic.find_last_of("/") + 1);
+
+        createTableQuery = "CREATE TABLE IF NOT EXISTS " + tableName + " ("
+                           "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                           "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,"
+                           "payload TEXT NOT NULL"
+                           ");";
+
+        // Execute the create table query
+        char *errorMessage = nullptr;
+        if (sqlite3_exec(db, createTableQuery.c_str(), nullptr, 0, &errorMessage) != SQLITE_OK) {
+            cerr << "SQL error: " << errorMessage << endl;
+            sqlite3_free(errorMessage); // Free the error message
+        } else {
+            cout << "Table created or already exists for: " << tableName << endl;
+        }
+    }
 }
 
 // Helper method to execute queries

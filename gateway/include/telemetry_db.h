@@ -6,7 +6,7 @@
 #include <vector>
 #include <iostream>
 
-const std::string DATABASE_PATH("../../data/telemetry.db");
+const std::string DATABASE_PATH("../../telemetry.db");
 const std::string TABLE_NAME("telemetry");
 
 class TelemetryDB {
@@ -25,8 +25,7 @@ private:
     // Static callback function for query execution
     static int callback(void *data, int argc, char **argv, char **azColName);
 
-    // Helper method to execute a SQL query
-    std::vector<std::vector<std::string> > executeQuery(const std::string &query);
+    void createTablesIfNotExist() const;
 
 public:
     // Destructor to close the database connection
@@ -34,6 +33,9 @@ public:
 
     // Static method to get the singleton instance
     static TelemetryDB &getInstance();
+
+    // Helper method to execute a SQL query
+    std::vector<std::vector<std::string> > executeQuery(const std::string &query);
 
     // Method to query specific telemetry data
     std::vector<std::vector<std::string> > getHouseTemperature();

@@ -31,6 +31,7 @@ add_executable(gateway ${SRC_FILES}
         src/mqtt_clients/backend_mqtt_client.cpp
         src/mqtt_clients/gateway_mqtt_client.cpp
         src/mqtt_clients/mqtt_client.cpp
+        include/sensors_data_storer.h
 )
 
 # Specify output directory for the executable
