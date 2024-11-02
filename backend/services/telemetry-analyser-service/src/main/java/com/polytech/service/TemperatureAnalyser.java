@@ -83,7 +83,7 @@ public class TemperatureAnalyser implements TelemetryAnalyser {
                 "from(bucket:\"%s\") " +
                 "|> range(start: -%s) " +
                 "|> filter(fn: (r) => r._measurement == \"temperature\") " +
-                "|> mean()",
+                "|> last()",
                 influxdbBucket, analyseTimespan);
 
         List<FluxTable> result = queryApi.query(flux);

@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rabbitmq-deployment
+  namespace: elderspy-ns
 spec:
   replicas: 1
   selector:
@@ -21,7 +22,7 @@ spec:
             - containerPort: 15672  # Management UI port
           env:
             - name: RABBITMQ_DEFAULT_USER
-              value: "admin"
+              value: "rabbitmq.elderspy-ns.svc.cluster.local"
             - name: RABBITMQ_DEFAULT_PASS
               value: "admin123"
           resources:

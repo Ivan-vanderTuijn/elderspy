@@ -13,6 +13,8 @@ import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import java.util.Random;
+
 
 @Slf4j
 @ApplicationScoped
@@ -57,7 +59,7 @@ public class IngestionService {
             Point point = Point.measurement(data.getMeasurement())
                     .addTag("edgeId", data.getEdgeId())
                     .addTag("deviceId", data.getDeviceId())
-                    .addField("celsius", data.getValue())
+                    .addField("celsius", Double.parseDouble(data.getValue()))
                     .time(data.getTimestamp(), WritePrecision.MS);
 
             WriteApiBlocking writeApi = influxDBClient.getWriteApiBlocking();

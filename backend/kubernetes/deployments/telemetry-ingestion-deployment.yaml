@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: telemetry-ingestion-deployment
+  namespace: elderspy-ns
 spec:
   replicas: 1
   selector:
@@ -14,14 +15,15 @@ spec:
     spec:
       containers:
         - name: telemetry-ingestion
-          image: pedroker9/telemetry-ingestion-ms:latest
+          image: telemetry-ingestion-ms:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 9901
           env:
             - name: RABBITMQ_HOST
-              value: "rabbitmq"
+              value: "rabbitmq.elderspy-ns.svc.cluster.local"
             - name: RABBITMQ_PORT
-              value: "5672"
+              value: "1883"
             - name: RABBITMQ_USERNAME
               value: "admin"
             - name: RABBITMQ_PASSWORD
@@ -30,7 +32,7 @@ spec:
                   name: rabbitmq-secrets
                   key: RABBITMQ_PASSWORD
             - name: INFLUXDB_URL
-              value: "http://influxdb:8086"
+              value: "http://influxdb.elderspy-ns.svc.cluster.local:8086"
             - name: INFLUXDB_TOKEN
               valueFrom:
                 secretKeyRef:
