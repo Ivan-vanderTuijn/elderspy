@@ -21,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TelemetryProducer {
     private final Map<String, Cancellable> continuousTelemetry = new ConcurrentHashMap<>();
 
-    // Inject an emitter to send messages to the "telemetry-out" channel
     @Inject
     @Channel("telemetry-channel")
     Emitter<String> telemetryEmitter;
@@ -39,34 +38,34 @@ public class TelemetryProducer {
     }
 
     // Method to simulate continuous telemetry readings
-    public Multi<TelemetryData> generateTelemetryData(String deviceId) {
+    public Multi<TelemetryData> generateTelemetryData(String edgeId, String deviceId) {
         return Multi.createFrom().ticks().every(Duration.ofSeconds(1))
                 .map(tick -> new TelemetryData(
                         Instant.now(),
-                        "edge-1",
+                        edgeId,
                         deviceId,
                         "temperature",
                         String.valueOf(20 + random.nextDouble() * 10)
                 ));
     }
 
-    public void startContinuousTelemetry(String deviceId) {
-        if (continuousTelemetry.containsKey(deviceId)) {
+    public void startContinuousTelemetry(String edgeId, String deviceId) {
+        if (continuousTelemetry.containsKey(edgeId + "|" + deviceId)) {
             throw new IllegalStateException("Continuous telemetry already running for device: " + deviceId);
         }
 
-        Cancellable cancellable = generateTelemetryData(deviceId)
+        Cancellable cancellable = generateTelemetryData(edgeId, deviceId)
                 .subscribe().with(
-                        data -> sendTelemetryData(data),
+                        this::sendTelemetryData,
                         throwable -> log.error("Error in continuous telemetry", throwable)
                 );
 
-        continuousTelemetry.put(deviceId, cancellable);
+        continuousTelemetry.put(edgeId + "|" + deviceId, cancellable);
     }
 
     // Stop continuous telemetry for a device
-    public void stopContinuousTelemetry(String deviceId) {
-        Cancellable cancellable = continuousTelemetry.remove(deviceId);
+    public void stopContinuousTelemetry(String edgeId, String deviceId) {
+        Cancellable cancellable = continuousTelemetry.remove(edgeId + "|" + deviceId);
         if (cancellable != null) {
             cancellable.cancel();
         }

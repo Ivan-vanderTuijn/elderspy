@@ -81,9 +81,10 @@ public class TemperatureAnalyser implements TelemetryAnalyser {
 
         String flux = String.format(
                 "from(bucket:\"%s\") " +
-                "|> range(start: -%s) " +
-                "|> filter(fn: (r) => r._measurement == \"temperature\") " +
-                "|> last()",
+                        "|> range(start: -%s) " +
+                        "|> filter(fn: (r) => r._measurement == \"temperature\") " +
+                        "|> mean()" +
+                        "|> keep(columns: [\"_value\", \"deviceId\", \"edgeId\"])",
                 influxdbBucket, analyseTimespan);
 
         List<FluxTable> result = queryApi.query(flux);
@@ -91,16 +92,18 @@ public class TemperatureAnalyser implements TelemetryAnalyser {
         for (FluxTable table : result) {
             for (FluxRecord record : table.getRecords()) {
                 double avgTemp = ((Number) Objects.requireNonNull(record.getValue())).doubleValue();
-                log.info("Average temperature: {}", avgTemp);
+                String deviceId = (String) record.getValueByKey("deviceId");
+                String edgeId = (String) record.getValueByKey("edgeId");
+                log.info("Average temperature for deviceId: {}, edgeId: {}: {}", deviceId, edgeId, avgTemp);
                 if (avgTemp > temperatureThreshold) {
-                    emitAlert(avgTemp);
+                    emitAlert(avgTemp, deviceId, edgeId); // Pass deviceId and edgeId to the alert method
                 }
             }
         }
     }
 
-    private void emitAlert(double temperature) {
-        log.warn("ALERT: Temperature threshold exceeded. Current average: {}", temperature);
+    private void emitAlert(double temperature, String deviceId, String edgeId) {
+        log.warn("ALERT: {} {} - Temperature threshold exceeded. Current average: {}", edgeId, deviceId, temperature);
         // TODO : Implement actual alert mechanism here
     }
 }

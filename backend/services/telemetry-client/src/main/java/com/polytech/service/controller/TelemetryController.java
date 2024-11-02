@@ -52,13 +52,13 @@ public class TelemetryController {
     }
 
     @POST
-    @Path("/device/{deviceId}/start")
-    public Response startContinuousTelemetry(@PathParam("deviceId") String deviceId) {
+    @Path("/{edgeId}/{deviceId}/start")
+    public Response startContinuousTelemetry(@PathParam("deviceId") String deviceId, @PathParam("edgeId") String edgeId) {
         try {
-            producer.startContinuousTelemetry(deviceId);
-            log.info("Started continuous telemetry for device: {}", deviceId);
+            producer.startContinuousTelemetry(edgeId, deviceId);
+            log.info("Started continuous telemetry for device: {} {}", edgeId, deviceId);
             return Response.ok()
-                    .entity("Started continuous telemetry for device: " + deviceId)
+                    .entity("Started continuous telemetry for " + edgeId + " " + deviceId)
                     .build();
         } catch (Exception e) {
             log.error("Error starting continuous telemetry", e);
@@ -69,13 +69,13 @@ public class TelemetryController {
     }
 
     @POST
-    @Path("/device/{deviceId}/stop")
-    public Response stopContinuousTelemetry(@PathParam("deviceId") String deviceId) {
+    @Path("/{edgeId}/{deviceId}/stop")
+    public Response stopContinuousTelemetry(@PathParam("deviceId") String deviceId, @PathParam("edgeId") String edgeId) {
         try {
-            producer.stopContinuousTelemetry(deviceId);
-            log.info("Stopped continuous telemetry for device: {}", deviceId);
+            producer.stopContinuousTelemetry(edgeId, deviceId);
+            log.info("Stopped continuous telemetry for device: {} {}", edgeId, deviceId);
             return Response.ok()
-                    .entity("Stopped continuous telemetry for device: " + deviceId)
+                    .entity("Stopped continuous telemetry for " + edgeId + " " + deviceId)
                     .build();
         } catch (Exception e) {
             log.error("Error stopping continuous telemetry", e);
