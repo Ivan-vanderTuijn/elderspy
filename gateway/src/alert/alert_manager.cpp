@@ -1,68 +1,109 @@
 #include "alert/alert_manager.h"
 #include <iostream>
-#include <stdexcept>
-#include <cpprest/http_client.h>
-#include <cpprest/json.h>
+#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
+#include <cpprest/http_client.h>  // Requires C++ REST SDK or a similar HTTP library
 
-using namespace web;
-using namespace web::http;
-using namespace web::http::client;
+#include "config/global.h"
+#include "mqtt_clients/mqtt_client_factory.h"
+
 using namespace std;
+using namespace nlohmann;
 
-// Constructor
-AlertManager::AlertManager(const string &backendUrl)
-    : backendUrl(backendUrl) {
+AlertManager::AlertManager(const std::string &backendUrl)
+    : backendUrl(backendUrl),
+      client(MqttClientFactory::createClient(MqttClientFactory::GATEWAY, [this](mqtt::const_message_ptr msg) {
+          onMessage(msg);
+      })) {
+    client->subscribe("sensor/#", 1);
+    cout << "[AlertManager] Subscribed to sensor topics." << endl; // Log subscription
 }
 
-// Handle incoming sensor data
-void AlertManager::handleSensorData(SensorType type, const string &payload) {
-    // Parse the payload (assuming it contains a numeric value as a string)
-    double value;
+void AlertManager::onMessage(mqtt::const_message_ptr msg) {
+    string topic = msg->get_topic();
+    cout << "[AlertManager] Message received on topic: " << topic << endl; // Log received message
+
+    // Parse JSON payload
+    json payload;
     try {
-        value = stod(payload);
-    } catch (const invalid_argument &e) {
-        cerr << "Invalid payload: " << payload << endl;
-        return;
-    } catch (const out_of_range &e) {
-        cerr << "Payload value out of range: " << payload << endl;
+        payload = json::parse(msg->to_string());
+        cout << "[AlertManager] Parsed JSON payload: " << payload.dump() << endl; // Log parsed payload
+    } catch (const json::parse_error &e) {
+        cerr << "[AlertManager] JSON parse error: " << e.what() << endl;
         return;
     }
 
-    // Check if the value is above the threshold
-    if (isAboveThreshold(type, value)) {
-        sendAlertToBackend(type, value);
+    // Retrieve values from JSON
+    string deviceId = payload["deviceId"].get<string>();
+    float value = payload["value"].get<float>();
+    cout << "[AlertManager] Device ID: " << deviceId << ", Value: " << value << endl; // Log device info
+
+    // Generate the timestamp
+    time_t now = time(nullptr);
+    char timestamp[21]; // 20 + 1 for null terminator
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%dT%H:%M:%SZ", localtime(&now));
+    cout << "[AlertManager] Generated timestamp: " << timestamp << endl; // Log timestamp
+
+    // Check sensor type and thresholds
+    SensorType sensorType = getSensorTypeByTopic(topic);
+    if (sensorConfigs.find(sensorType) == sensorConfigs.end()) {
+        cerr << "[AlertManager] Unknown sensor type for topic: " << topic << endl;
+        return;
     }
+    cout << "[AlertManager] Sensor type determined: " << static_cast<int>(sensorType) << endl; // Log the sensor type
+
+
+    const SensorConfig &config = sensorConfigs.at(sensorType);
+    const SensorThresholds &thresholds = config.thresholds;
+
+    // Check against thresholds for alerting
+    for (const auto &[severity, range]: thresholds.thresholds) {
+        // If value exceeds the upper threshold or is below the lower threshold
+        if (value > range.second || value < range.first) {
+            cout << "[AlertManager] Value " << value << " exceeds thresholds for severity: " <<
+                    getSeverityString(severity) << endl; // Log threshold breach
+            sendAlert(severity, deviceId, timestamp, std::to_string(value));
+        }
+    }
+    cout << "[AlertManager] Threshold checks complete." << endl; // Log threshold checks
 }
 
-// Check if the value is above the configured thresholds
-bool AlertManager::isAboveThreshold(SensorType type, double value) {
-    // auto it = sensorConfigs.find(type);
-    // if (it == sensorConfigs.end()) {
-    //     cerr << "Sensor type not found: " << static_cast<int>(type) << endl;
-    //     return false; // Return false if the type is not found
-    // }
-    // const SensorThresholds &thresholds = it->second.thresholds;
-    // return value < thresholds.min || value > thresholds.max;
+void AlertManager::sendAlert(const AlertSeverity &severity, const string &deviceId, const std::string &timestamp,
+                             const std::string &value) {
+    cout << "[AlertManager] Preparing to send alert..." << endl; // Log alert preparation
+    // Prepare the alert message
+    web::http::client::http_client httpClient(backendUrl);
+    web::http::http_request request(web::http::methods::POST);
+
+    // Build the JSON payload
+    json jsonPayload;
+    jsonPayload["severity"] = getSeverityString(severity);
+    jsonPayload["edgeId"] = EDGE_ID; // Replace with actual edge ID if available
+    jsonPayload["deviceId"] = deviceId;
+    jsonPayload["timestamp"] = timestamp;
+    jsonPayload["message"] = value;
+
+    cout << "[AlertManager] Sending alert: " << jsonPayload.dump() << endl; // Log alert details
+
+    request.set_body(jsonPayload.dump());
+    request.headers().set_content_type("application/json");
+
+    // Send the alert to the backend
+    httpClient.request(request).then([](web::http::http_response response) {
+        if (response.status_code() != web::http::status_codes::OK) {
+            cerr << "[AlertManager] Alert failed to send: " << response.status_code() << endl;
+        } else {
+            cout << "[AlertManager] Alert sent successfully." << endl;
+        }
+    }).wait();
 }
 
-// Send an alert to the backend
-void AlertManager::sendAlertToBackend(SensorType type, double value) {
-    // // Create a JSON object to hold the alert data
-    // json::value alertData;
-    // alertData[U("sensor_type")] = json::value(static_cast<int>(type));
-    // alertData[U("value")] = json::value(value);
-    //
-    // // Create an HTTP client
-    // http_client client(U(backendUrl));
-    //
-    // // Send a POST request to the backend
-    // client.request(methods::POST, U("/alerts"), alertData.serialize(), U("application/json"))
-    //         .then([](http_response response) {
-    //             if (response.status_code() == status_codes::OK) {
-    //                 cout << "Alert sent successfully." << endl;
-    //             } else {
-    //                 cerr << "Failed to send alert. Status code: " << response.status_code() << endl;
-    //             }
-    //         })
-    //         .wait(); // Wait for the response (blocking call)
+std::string AlertManager::getSeverityString(AlertSeverity severity) {
+    switch (severity) {
+        case AlertSeverity::CRITICAL: return "CRITICAL";
+        case AlertSeverity::SERIOUS: return "SERIOUS";
+        case AlertSeverity::MINOR: return "MINOR";
+        case AlertSeverity::ENVIRONMENTAL: return "ENVIRONMENTAL";
+        default: return "UNKNOWN";
+    }
 }

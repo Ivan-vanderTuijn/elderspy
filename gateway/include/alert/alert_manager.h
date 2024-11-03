@@ -5,19 +5,24 @@
 #include <string>
 #include <map>
 #include <cpprest/http_client.h>  // Requires C++ REST SDK or a similar HTTP library
+#include <mqtt_clients/mqtt_client.h>
 
-class AlertManager {
+class AlertManager : public mqtt::callback {
 public:
     AlertManager(const std::string &backendUrl);
 
-    void handleSensorData(SensorType type, const std::string &payload);
+    // Override the message callback from the mqtt::callback base class
+    void onMessage(mqtt::const_message_ptr msg);
 
 private:
+    std::unique_ptr<MqttClient> client;
     std::string backendUrl; // Backend URL for REST requests
 
-    bool isAboveThreshold(SensorType type, double value);
 
-    void sendAlertToBackend(SensorType type, double value);
+    void sendAlert(const AlertSeverity &severity, const std::string &deviceId, const std::string &timestamp,
+                   const std::string &message);
+
+    std::string getSeverityString(AlertSeverity severity);
 };
 
 #endif // ALERTMANAGER_H

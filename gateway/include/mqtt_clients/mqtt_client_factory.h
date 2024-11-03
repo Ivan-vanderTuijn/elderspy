@@ -12,9 +12,11 @@ public:
                                                     MqttClient::MessageCallback messageCallback = nullptr);
 
 private:
-    static std::unique_ptr<MqttClient> createGatewayClient(MqttClient::MessageCallback messageCallback);
+    static std::unique_ptr<MqttClient> createGatewayClient(MqttClient::MessageCallback messageCallback,
+                                                           const std::string &unique_identifier);
 
-    static std::unique_ptr<MqttClient> createBackendClient(MqttClient::MessageCallback messageCallback);
+    static std::unique_ptr<MqttClient> createBackendClient(MqttClient::MessageCallback messageCallback,
+                                                           const std::string &unique_identifier);
 };
 
 #endif // MQTTCLIENTFACTORY_H

@@ -134,13 +134,13 @@ services:
     depends_on:
       - alerting-ms
     environment:
-      - ALERTING_SERVICE_HOST=alerting-service
+      - ALERTING_SERVICE_HOST=alerting-ms
       - ALERTING_SERVICE_PORT=9903
     networks:
       - elder-spy-network
     restart: on-failure
 
- 
+
 
 networks:
   elder-spy-network:

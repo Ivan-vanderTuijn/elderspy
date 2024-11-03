@@ -14,7 +14,7 @@ void handle_signal(int signal) {
 }
 
 int main() {
-    // AlertManager alertManager = AlertManager("http://backend_url:8080");
+    AlertManager alertManager = AlertManager("http://localhost:9904/gsm-gateway/alert");
     SensorsDataStorer sensorsDataStorer = SensorsDataStorer();
     SensorsDataForwarder sensors_data_forwarder = SensorsDataForwarder();
 

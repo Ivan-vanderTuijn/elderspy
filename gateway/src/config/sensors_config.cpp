@@ -21,7 +21,7 @@ const std::unordered_map<SensorType, SensorConfig> sensorConfigs = {
                 {
                     {AlertSeverity::CRITICAL, {0, 140}},
                     {AlertSeverity::SERIOUS, {20, 130}},
-                    {AlertSeverity::MINOR, {40, 110}},
+                    {AlertSeverity::MINOR, {40, 100}},
                 }
             }
         }
