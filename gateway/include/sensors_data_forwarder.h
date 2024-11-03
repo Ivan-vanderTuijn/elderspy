@@ -9,11 +9,11 @@
 
 class SensorsDataForwarder {
 public:
-    SensorsDataForwarder(MqttClient &gatewayClient, MqttClient &backendClient);
+    SensorsDataForwarder();
 
 private:
-    MqttClient &gatewayClient;
-    MqttClient &backendClient;
+    MqttClient gatewayClient;
+    MqttClient backendClient;
 
     void onMessage(mqtt::const_message_ptr msg);
 };

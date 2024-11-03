@@ -1,13 +1,11 @@
-
 #include <mqtt_clients/mqtt_client.h>
-#include <nlohmann/json.hpp>
-#include "config/global.h"
+#include <iostream>
 
 using namespace std;
 
-MqttClient::MqttClient(const string &address, const string &clientId, const string &username,
-                       const string &password)
-    : client(address, clientId) {
+MqttClient::MqttClient(const string &address, const string &clientId, MessageCallback messageCallback,
+                       const string &username, const string &password)
+    : client(address, clientId), message_callback(messageCallback) {
     client.set_callback(*this);
     connect(username, password);
 }
@@ -20,13 +18,8 @@ void MqttClient::connect(const string &username, const string &password) {
     mqtt::connect_options connOpts;
     connOpts.set_clean_session(true);
 
-    // Set the username and password only if provided
-    if (!username.empty()) {
-        connOpts.set_user_name(username);
-    }
-    if (!password.empty()) {
-        connOpts.set_password(password);
-    }
+    if (!username.empty()) connOpts.set_user_name(username);
+    if (!password.empty()) connOpts.set_password(password);
 
     try {
         cout << "Connecting to the broker server..." << endl;
@@ -51,7 +44,7 @@ void MqttClient::disconnect() {
 
 void MqttClient::subscribe(const string &topic, int qos) {
     try {
-        cout << "Subscribing to topic: " << topic << endl;
+        cout << "Subscribing to " << client.get_server_uri() << " on topic " << topic << endl;
         client.subscribe(topic, qos)->wait();
     } catch (const mqtt::exception &exc) {
         cerr << "Error during subscription: " << exc.what() << endl;
@@ -60,7 +53,7 @@ void MqttClient::subscribe(const string &topic, int qos) {
 
 void MqttClient::publish(const string &topic, const string &payload, int qos) {
     try {
-        cout << "Publishing message to broker: " << payload << endl;
+        cout << "Publishing message to : " << client.get_server_uri() << " " << payload << endl;
         mqtt::message_ptr pubmsg = mqtt::make_message(topic, payload);
         pubmsg->set_qos(qos);
         client.publish(pubmsg);
@@ -69,37 +62,9 @@ void MqttClient::publish(const string &topic, const string &payload, int qos) {
     }
 }
 
-int MqttClient::add_message_callback(MessageCallback cb) {
-    lock_guard<mutex> lock(callback_mutex);
-    int id = next_callback_id++;
-    message_callbacks[id] = move(cb);
-    return id;
-}
-
-void MqttClient::update_message_callback(int id, MessageCallback cb) {
-    lock_guard<mutex> lock(callback_mutex);
-    message_callbacks[id] = move(cb);
-}
-
-void MqttClient::remove_message_callback(int id) {
-    lock_guard<mutex> lock(callback_mutex);
-    message_callbacks.erase(id);
-}
-
-
 void MqttClient::message_arrived(mqtt::const_message_ptr msg) {
-    string topic = msg->get_topic();
-    string payload = msg->to_string();
-
-    cout << "\nMessage arrived on topic: " << topic << endl;
-    cout << "Payload: " << payload << endl;
-
-    // Call registered message callbacks
-    lock_guard<mutex> lock(callback_mutex);
-    for (const auto &[id, cb]: message_callbacks) {
-        if (cb) {
-            cb(msg);
-        }
+    if (message_callback) {
+        message_callback(msg);
     }
 }
 

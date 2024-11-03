@@ -1,14 +1,13 @@
 #include "sensors_data_storer.h"
 #include <nlohmann/json.hpp>
+
+#include "config/global.h"
 using namespace nlohmann;
 using namespace std;
 
-SensorsDataStorer::SensorsDataStorer(MqttClient &mqttClient)
-    : client(mqttClient) {
+SensorsDataStorer::SensorsDataStorer() : client(GATEWAY_BROKER_ADDRESS, EDGE_ID + "SensorsDataStorer",
+                                                [this](mqtt::const_message_ptr msg) { onMessage(msg); }) {
     client.subscribe("sensor/#", 1);
-    client.add_message_callback([this](mqtt::const_message_ptr msg) {
-        onMessage(msg);
-    });
 }
 
 void SensorsDataStorer::onMessage(mqtt::const_message_ptr msg) {

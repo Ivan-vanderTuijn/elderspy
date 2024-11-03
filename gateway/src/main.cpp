@@ -14,11 +14,9 @@ void handle_signal(int signal) {
 }
 
 int main() {
-    MqttClient gatewayMqttClient(GATEWAY_BROKER_ADDRESS, EDGE_ID);
-    MqttClient backendMqttClient(BACKEND_BROKER_ADDRESS, EDGE_ID, RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS);
     // AlertManager alertManager = AlertManager("http://backend_url:8080");
-    SensorsDataStorer sensorsDataStorer = SensorsDataStorer(gatewayMqttClient);
-    SensorsDataForwarder sensors_data_forwarder = SensorsDataForwarder(gatewayMqttClient, backendMqttClient);
+    SensorsDataStorer sensorsDataStorer = SensorsDataStorer();
+    SensorsDataForwarder sensors_data_forwarder = SensorsDataForwarder();
 
     // Set up signal handling for clean exit
     std::signal(SIGINT, handle_signal); // Handle Ctrl+C

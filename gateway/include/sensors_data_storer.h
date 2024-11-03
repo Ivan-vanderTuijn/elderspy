@@ -6,10 +6,10 @@
 
 class SensorsDataStorer {
 public:
-    SensorsDataStorer(MqttClient &mqttClient);
+    SensorsDataStorer();
 
 private:
-    MqttClient &client;
+    MqttClient client;
 
     void onMessage(mqtt::const_message_ptr msg);
 };

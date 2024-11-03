@@ -13,12 +13,12 @@
 using namespace std;
 using namespace nlohmann;
 
-SensorsDataForwarder::SensorsDataForwarder(MqttClient &gatewayClient, MqttClient &backendClient)
-    : gatewayClient(gatewayClient), backendClient(backendClient) {
+SensorsDataForwarder::SensorsDataForwarder()
+    : gatewayClient(GATEWAY_BROKER_ADDRESS, EDGE_ID + "SensorsDataForwarder",
+                    [this](mqtt::const_message_ptr msg) { onMessage(msg); }),
+      backendClient(BACKEND_BROKER_ADDRESS, EDGE_ID + "SensorsDataForwarder", nullptr, RABBITMQ_DEFAULT_USER,
+                    RABBITMQ_DEFAULT_PASS) {
     gatewayClient.subscribe("sensor/#", 1);
-    gatewayClient.add_message_callback([this](mqtt::const_message_ptr msg) {
-        onMessage(msg);
-    });
 }
 
 void SensorsDataForwarder::onMessage(mqtt::const_message_ptr msg) {
@@ -47,8 +47,6 @@ void SensorsDataForwarder::onMessage(mqtt::const_message_ptr msg) {
             {"measurement", measurement},
             {"value", value},
         };
-        cout << "Forwarding message: " << data.dump() << endl;
-
         backendClient.publish(BACKEND_TELEMETRY_TOPIC, data.dump(), 0);
     } catch (const json::parse_error &e) {
         cerr << "JSON parse error: " << e.what() << endl;
