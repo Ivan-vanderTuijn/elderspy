@@ -12,8 +12,8 @@ public:
     SensorsDataForwarder();
 
 private:
-    MqttClient gatewayClient;
-    MqttClient backendClient;
+    std::unique_ptr<MqttClient> gatewayClient;
+    std::unique_ptr<MqttClient> backendClient;
 
     void onMessage(mqtt::const_message_ptr msg);
 };

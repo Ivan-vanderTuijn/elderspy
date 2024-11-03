@@ -1,9 +1,8 @@
-#ifndef SENSORS_CONFIG_H
-#define SENSORS_CONFIG_H
+#pragma once
 
 #include <string>
 #include <unordered_map>
-#include <stdexcept> // Include this header for std::invalid_argument
+#include <stdexcept>
 
 // Define an enum to represent the types of sensors.
 enum class SensorType {
@@ -11,10 +10,17 @@ enum class SensorType {
     HEART_RATE,
 };
 
-// Define a struct to encapsulate sensor thresholds.
+// Define an enum for alert severity levels.
+enum class AlertSeverity {
+    CRITICAL,
+    SERIOUS,
+    MINOR,
+    ENVIRONMENTAL
+};
+
+// Define a struct to encapsulate sensor thresholds per severity level.
 struct SensorThresholds {
-    int min;
-    int max;
+    std::unordered_map<AlertSeverity, std::pair<int, int> > thresholds;
 };
 
 // Define a struct to encapsulate sensor configuration.
@@ -25,9 +31,7 @@ struct SensorConfig {
 };
 
 // Use unordered_map to store sensor configurations.
-extern const std::unordered_map<SensorType, SensorConfig> sensorConfigs; // Declare it as extern
+extern const std::unordered_map<SensorType, SensorConfig> sensorConfigs;
 
 // Function declaration
-SensorType getSensorTypeByTopic(const std::string &topic); // Declare the function
-
-#endif // SENSORS_CONFIG_H
+SensorType getSensorTypeByTopic(const std::string &topic);

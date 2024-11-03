@@ -10,15 +10,16 @@
 
 #include "config/global.h"
 
+#include "mqtt_clients/mqtt_client_factory.h"
+
 using namespace std;
 using namespace nlohmann;
 
 SensorsDataForwarder::SensorsDataForwarder()
-    : gatewayClient(GATEWAY_BROKER_ADDRESS, EDGE_ID + "SensorsDataForwarder",
-                    [this](mqtt::const_message_ptr msg) { onMessage(msg); }),
-      backendClient(BACKEND_BROKER_ADDRESS, EDGE_ID + "SensorsDataForwarder", nullptr, RABBITMQ_DEFAULT_USER,
-                    RABBITMQ_DEFAULT_PASS) {
-    gatewayClient.subscribe("sensor/#", 1);
+    : gatewayClient(MqttClientFactory::createClient(
+          MqttClientFactory::GATEWAY, [this](mqtt::const_message_ptr msg) { onMessage(msg); })),
+      backendClient(MqttClientFactory::createClient(MqttClientFactory::BACKEND)) {
+    gatewayClient->subscribe("sensor/#", 1);
 }
 
 void SensorsDataForwarder::onMessage(mqtt::const_message_ptr msg) {
@@ -47,7 +48,7 @@ void SensorsDataForwarder::onMessage(mqtt::const_message_ptr msg) {
             {"measurement", measurement},
             {"value", value},
         };
-        backendClient.publish(BACKEND_TELEMETRY_TOPIC, data.dump(), 0);
+        backendClient->publish(BACKEND_TELEMETRY_TOPIC, data.dump(), 0);
     } catch (const json::parse_error &e) {
         cerr << "JSON parse error: " << e.what() << endl;
     } catch (const json::type_error &e) {

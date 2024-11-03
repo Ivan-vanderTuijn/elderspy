@@ -2,12 +2,15 @@
 #include <nlohmann/json.hpp>
 
 #include "config/global.h"
+#include "mqtt_clients/mqtt_client_factory.h"
 using namespace nlohmann;
 using namespace std;
 
-SensorsDataStorer::SensorsDataStorer() : client(GATEWAY_BROKER_ADDRESS, EDGE_ID + "SensorsDataStorer",
-                                                [this](mqtt::const_message_ptr msg) { onMessage(msg); }) {
-    client.subscribe("sensor/#", 1);
+SensorsDataStorer::SensorsDataStorer() : client(
+    MqttClientFactory::createClient(MqttClientFactory::GATEWAY, [this](mqtt::const_message_ptr msg) {
+        onMessage(msg);
+    })) {
+    client->subscribe("sensor/#", 1);
 }
 
 void SensorsDataStorer::onMessage(mqtt::const_message_ptr msg) {

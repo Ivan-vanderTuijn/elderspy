@@ -9,7 +9,7 @@ public:
     SensorsDataStorer();
 
 private:
-    MqttClient client;
+    std::unique_ptr<MqttClient> client;
 
     void onMessage(mqtt::const_message_ptr msg);
 };

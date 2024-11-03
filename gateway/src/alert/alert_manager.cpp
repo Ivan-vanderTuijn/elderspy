@@ -36,13 +36,13 @@ void AlertManager::handleSensorData(SensorType type, const string &payload) {
 
 // Check if the value is above the configured thresholds
 bool AlertManager::isAboveThreshold(SensorType type, double value) {
-    auto it = sensorConfigs.find(type);
-    if (it == sensorConfigs.end()) {
-        cerr << "Sensor type not found: " << static_cast<int>(type) << endl;
-        return false; // Return false if the type is not found
-    }
-    const SensorThresholds &thresholds = it->second.thresholds;
-    return value < thresholds.min || value > thresholds.max;
+    // auto it = sensorConfigs.find(type);
+    // if (it == sensorConfigs.end()) {
+    //     cerr << "Sensor type not found: " << static_cast<int>(type) << endl;
+    //     return false; // Return false if the type is not found
+    // }
+    // const SensorThresholds &thresholds = it->second.thresholds;
+    // return value < thresholds.min || value > thresholds.max;
 }
 
 // Send an alert to the backend
