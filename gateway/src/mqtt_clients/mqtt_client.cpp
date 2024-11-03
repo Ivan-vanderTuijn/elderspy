@@ -1,29 +1,39 @@
-#include <thread>
-#include <chrono>
+
 #include <mqtt_clients/mqtt_client.h>
+#include <nlohmann/json.hpp>
+#include "config/global.h"
 
 using namespace std;
 
-MqttClient::MqttClient(const string &address, const string &clientId)
+MqttClient::MqttClient(const string &address, const string &clientId, const string &username,
+                       const string &password)
     : client(address, clientId) {
     client.set_callback(*this);
-    connect();
+    connect(username, password);
 }
 
 MqttClient::~MqttClient() {
     disconnect();
 }
 
-void MqttClient::connect() {
+void MqttClient::connect(const string &username, const string &password) {
     mqtt::connect_options connOpts;
     connOpts.set_clean_session(true);
 
+    // Set the username and password only if provided
+    if (!username.empty()) {
+        connOpts.set_user_name(username);
+    }
+    if (!password.empty()) {
+        connOpts.set_password(password);
+    }
+
     try {
-        cout << "Connecting to the NanoMQ server..." << endl;
+        cout << "Connecting to the broker server..." << endl;
         cout << "Address: " << client.get_server_uri() << endl;
         cout << "Client ID: " << client.get_client_id() << endl;
         client.connect(connOpts)->wait();
-        cout << "Connected to NanoMQ!" << endl;
+        cout << "Connected to broker!" << endl;
     } catch (const mqtt::exception &exc) {
         cerr << "Error: " << exc.what() << endl;
         throw;
@@ -33,7 +43,7 @@ void MqttClient::connect() {
 void MqttClient::disconnect() {
     try {
         client.disconnect()->wait();
-        cout << "Disconnected from NanoMQ." << endl;
+        cout << "Disconnected from broker." << endl;
     } catch (const mqtt::exception &exc) {
         cerr << "Error during disconnection: " << exc.what() << endl;
     }
@@ -50,10 +60,10 @@ void MqttClient::subscribe(const string &topic, int qos) {
 
 void MqttClient::publish(const string &topic, const string &payload, int qos) {
     try {
-        cout << "Publishing message to NanoMQ: " << payload << endl;
+        cout << "Publishing message to broker: " << payload << endl;
         mqtt::message_ptr pubmsg = mqtt::make_message(topic, payload);
         pubmsg->set_qos(qos);
-        client.publish(pubmsg)->wait();
+        client.publish(pubmsg);
     } catch (const mqtt::exception &exc) {
         cerr << "Error during publish: " << exc.what() << endl;
     }
@@ -83,14 +93,6 @@ void MqttClient::message_arrived(mqtt::const_message_ptr msg) {
 
     cout << "\nMessage arrived on topic: " << topic << endl;
     cout << "Payload: " << payload << endl;
-
-    if (topic == "sensor/house_temperature") {
-        cout << "Handling temperature data: " << payload << endl;
-    } else if (topic == "sensor/heart_rate") {
-        cout << "Handling heart rate data: " << payload << endl;
-    } else {
-        cout << "Received message on unhandled topic: " << topic << endl;
-    }
 
     // Call registered message callbacks
     lock_guard<mutex> lock(callback_mutex);

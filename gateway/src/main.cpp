@@ -2,8 +2,8 @@
 #include <csignal>
 #include <chrono>
 
+#include "sensors_data_forwarder.h"
 #include "sensors_data_storer.h"
-#include "mqtt_clients/gateway_mqtt_client.h"
 #include "alert/alert_manager.h"
 #include "config/global.h"
 
@@ -14,9 +14,11 @@ void handle_signal(int signal) {
 }
 
 int main() {
-    MqttClient mqttClient(GATEWAY_BROKER_ADDRESS, GATEWAY_CLIENT_ID);
+    MqttClient gatewayMqttClient(GATEWAY_BROKER_ADDRESS, EDGE_ID);
+    MqttClient backendMqttClient(BACKEND_BROKER_ADDRESS, EDGE_ID, RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS);
     // AlertManager alertManager = AlertManager("http://backend_url:8080");
-    SensorsDataStorer sensorsDataStorer = SensorsDataStorer(mqttClient);
+    SensorsDataStorer sensorsDataStorer = SensorsDataStorer(gatewayMqttClient);
+    SensorsDataForwarder sensors_data_forwarder = SensorsDataForwarder(gatewayMqttClient, backendMqttClient);
 
     // Set up signal handling for clean exit
     std::signal(SIGINT, handle_signal); // Handle Ctrl+C

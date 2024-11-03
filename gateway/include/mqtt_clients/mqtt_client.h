@@ -12,7 +12,9 @@ class MqttClient : public virtual mqtt::callback {
 public:
     using MessageCallback = std::function<void(mqtt::const_message_ptr)>;
 
-    MqttClient(const std::string &address, const std::string &clientId);
+    MqttClient(const std::string &address, const std::string &clientId, const std::string &username = "",
+               const std::string &password = "");
+
 
     ~MqttClient();
 
@@ -27,7 +29,8 @@ public:
     void remove_message_callback(int id);
 
 private:
-    void connect();
+    void connect(const std::string &username,
+                 const std::string &password);
 
     void disconnect();
 

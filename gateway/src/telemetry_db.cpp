@@ -50,7 +50,8 @@ void TelemetryDB::createTablesIfNotExist() const {
         createTableQuery = "CREATE TABLE IF NOT EXISTS " + tableName + " ("
                            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                            "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,"
-                           "payload TEXT NOT NULL"
+                           "deviceId TEXT NOT NULL,"
+                           "value TEXT NOT NULL"
                            ");";
 
         // Execute the create table query
@@ -97,12 +98,12 @@ vector<vector<string> > TelemetryDB::executeQuery(const string &query) {
 
 // Method to get house temperature data
 vector<vector<string> > TelemetryDB::getHouseTemperature() {
-    return executeQuery("SELECT payload FROM house_temperature");
+    return executeQuery("SELECT value FROM house_temperature");
 }
 
 // Method to get heart rate data
 vector<vector<string> > TelemetryDB::getHeartRate() {
-    return executeQuery("SELECT payload FROM heart_rate");
+    return executeQuery("SELECT value FROM heart_rate");
 }
 
 

@@ -22,16 +22,13 @@ add_executable(gateway ${SRC_FILES}
         include/alert/alert_manager.h
         include/config/global.h
         include/config/sensors_config.h
-        include/mqtt_clients/backend_mqtt_client.h
-        include/mqtt_clients/gateway_mqtt_client.h
         include/structs/telemetry_data.h
         include/telemetry_db.h
         src/alert/alert_manager.cpp
         src/config/sensors_config.cpp
-        src/mqtt_clients/backend_mqtt_client.cpp
-        src/mqtt_clients/gateway_mqtt_client.cpp
         src/mqtt_clients/mqtt_client.cpp
         include/sensors_data_storer.h
+        include/sensors_data_forwarder.h
 )
 
 # Specify output directory for the executable
