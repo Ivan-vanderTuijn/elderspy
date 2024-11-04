@@ -6,6 +6,9 @@ import com.influxdb.client.InfluxDBClientOptions;
 import com.influxdb.client.QueryApi;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
+import com.polytech.connector.AlertForwarder;
+import com.polytech.model.AlertMessage;
+import com.polytech.model.AlertSeverity;
 import io.quarkus.scheduler.Scheduled;
 import io.quarkus.scheduler.ScheduledExecution;
 import io.quarkus.scheduler.Scheduler;
@@ -16,7 +19,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,6 +40,10 @@ public class TemperatureAnalyser implements TelemetryAnalyser {
 
     @ConfigProperty(name = "influxdb.bucket", defaultValue = "telemetry-bucket")
     String influxdbBucket;
+
+    @Inject
+    @RestClient
+    AlertForwarder alertForwarder;
 
     @Getter
     @Setter
@@ -104,6 +113,6 @@ public class TemperatureAnalyser implements TelemetryAnalyser {
 
     private void emitAlert(double temperature, String deviceId, String edgeId) {
         log.warn("ALERT: {} {} - Temperature threshold exceeded. Current average: {}", edgeId, deviceId, temperature);
-        // TODO : Implement actual alert mechanism here
+        alertForwarder.forwardAlert(new AlertMessage(AlertSeverity.CRITICAL, edgeId, deviceId, Instant.now().toString(), "Temperature threshold exceeded (" + temperature + "°C) for " + deviceId + " on " + edgeId));
     }
 }

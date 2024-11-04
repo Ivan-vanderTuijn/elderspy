@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class AlertMessage {
     private AlertSeverity severity;
     private String edgeId;
-    private String sensorId;
+    private String deviceId;
     private String timestamp;
     private String message;
 }

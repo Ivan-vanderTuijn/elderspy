@@ -13,6 +13,6 @@ import java.util.List;
 @RegisterRestClient(configKey = "alerting-service-api")
 public interface AlertForwarder {
     @POST
-    @Path("/contacts")
+    @Path("/alert")
     List<String> forwardAlert(AlertMessage alertMessage);
 }

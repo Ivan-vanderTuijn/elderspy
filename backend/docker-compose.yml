@@ -117,6 +117,8 @@ services:
       - INFLUXDB_TOKEN=my-super-secret-auth-token
       - INFLUXDB_ORG=telemetry-org
       - INFLUXDB_BUCKET=telemetry-bucket
+      - ALERTING_SERVICE_HOST=alerting-ms
+      - ALERTING_SERVICE_PORT=9903
     networks:
       - elder-spy-network
     restart: on-failure
@@ -127,6 +129,9 @@ services:
       context: ./services
       dockerfile: alerting-service/src/main/docker/Dockerfile.jvm
     container_name: alerting-ms
+    environment:
+      - GSM_GATEWAY_HOST=gsm-gateway-ms
+      - GSM_GATEWAY_PORT=9904
     ports:
       - "9903:9903"
     networks:
@@ -143,8 +148,10 @@ services:
       - "9904:9904"
     depends_on:
       - alerting-ms
+    env_file:
+      - ./services/gsm-gateway/.env
     environment:
-      - ALERTING_SERVICE_HOST=alerting-service
+      - ALERTING_SERVICE_HOST=alerting-ms
       - ALERTING_SERVICE_PORT=9903
     networks:
       - elder-spy-network
