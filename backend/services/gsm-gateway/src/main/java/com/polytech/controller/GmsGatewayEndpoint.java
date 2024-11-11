@@ -39,6 +39,7 @@ public class GmsGatewayEndpoint {
 
         try {
             // For POC, we will send the alert to a personal phone number using the Free SMS API
+            log.info("Sending alert to personal phone number");
             alertSender.sendAlert(apiUser, apiPass, alertMessage.getMessage());
         } catch (Exception e) {
             log.error("Failed to send alert", e);
@@ -54,6 +55,7 @@ public class GmsGatewayEndpoint {
         try {
             // For POC, we will send the alert to a personal phone number using the Free SMS API
             // So we will ignore the contacts from AlertRequest and send the alert to the Free SMS api with creds mapped to personal phone number in the .env file
+            log.info("Sending alert to personal phone number");
             alertSender.sendAlert(apiUser, apiPass, alertRequest.getMessage());
         } catch (Exception e) {
             log.error("Failed to send alert", e);

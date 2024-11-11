@@ -45,7 +45,24 @@ password: admin123
 
 ## Architecture
 
+### Backend
+
+### Edge
+
+### Edge-Backend communication
+
+### Sensors
+
 ## Documentation
+
+### Alerting via SMS
+Currently, the alerting service is configured to send SMS alerts to a predefined phone number via an SMS API.  
+The service is triggered when the telemetry analyser service detects an anomaly in the telemetry data, or when receiving an alert from the edge. 
+The alerting service uses the `Free SMS API` to send SMS alerts.
+
+If you want to use the SMS alerting service, you need to provide the following environment variables, for example via a `.env` file located in the `~/backend/services/gsm-gateway` directory:
+- `FREE_SMS_API_USER`: The username for the Free SMS API
+- `FREE_SMS_API_PASS`: The password for the Free SMS API
 
 ### Telemetry client service API for Edge simulation
 
@@ -96,6 +113,30 @@ elderspy/
 
 ## How to contribute
 
+We welcome contributions to the **elderspy** project! Here’s how you can get involved:
 
+### 1. Fork the Repository
+- Start by forking the repository to your own GitHub account.
 
+### 2. Clone the Repository
+- Clone your forked repository to your local machine:
+```bash
+git clone https://github.com/your-username/elderspy.git
+```
 
+### 3. Set Up the Environment
+- Ensure you have the necessary dependencies installed, including Docker and any specific tools listed in the README.md.
+
+### 4. Make Changes
+- Make your changes to the codebase. Ensure that your changes are in line with the project’s guidelines and coding standards.
+- Test your changes locally to ensure they function as expected.
+- Add tests for your changes if applicable.
+- Update the documentation to reflect your changes if necessary.
+- Commit your changes and push them to your forked repository.
+
+### 5. Create a Pull Request
+- Create a pull request to the main repository.
+- Ensure your pull request description clearly explains the changes you’ve made and the reason for the changes.
+
+### 6. Review and Collaborate
+- Participate in the code review process by responding to feedback and making any necessary changes to your pull request.
