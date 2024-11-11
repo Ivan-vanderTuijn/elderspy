@@ -157,6 +157,8 @@ services:
       - elder-spy-network
     restart: on-failure
 
+
+
 networks:
   elder-spy-network:
     driver: bridge
@@ -164,3 +166,4 @@ networks:
 volumes:
   grafana-data:
   influxdb-data:
+  node_red_data:
