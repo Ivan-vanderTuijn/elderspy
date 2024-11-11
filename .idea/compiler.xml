@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <excludeFromCompile>
+      <directory url="file://$PROJECT_DIR$/src/main/resources/archetype-resources" includeSubdirectories="true" />
+    </excludeFromCompile>
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="telemetry-analyser-service" />
+        <module name="telemetry-ingestion-service" />
+        <module name="elderspy" />
+        <module name="common" />
+        <module name="alerting-service" />
+        <module name="telemetry-client" />
+        <module name="gsm-gateway" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="alerting-service" options="-parameters" />
+      <module name="common" options="-parameters" />
+      <module name="gsm-gateway" options="-parameters" />
+      <module name="telemetry-analyser-service" options="-parameters" />
+      <module name="telemetry-client" options="-parameters" />
+      <module name="telemetry-ingestion-service" options="-parameters" />
+    </option>
+  </component>
+</project>
