@@ -84,6 +84,75 @@ This API simulates sensor data normally published by the edge devices. When used
 
 ## Risk analysis
 
+Voici un exemple de matrice de risque au format README. Cette matrice peut être utile pour identifier, évaluer et prioriser les risques en fonction de leur probabilité et de leur impact.
+
+---
+
+# Matrice de Risque
+
+Voici la matrice de risques sur les principaux problèmes que nous avons identifiés. Pour rappel, les risques ssont classés en fonction de leur **probabilité** et de leur **impact**. 
+
+---
+
+|                  | **Impact Faible** | **Impact Modéré** | **Impact Important** | **Impact Grave**       | **Impact Catastrophique**       |
+|------------------|-------------------|--------------------|-----------------------|-------------------------|----------------------------------|
+| **Probabilité Très Faible** |               |                     |                        |                         |                                  |
+| **Probabilité Faible**      |               |                     |🟡 **R7** (Intrusion AMQP/MQTT) | 🟠 **R9** (Saturation stockage SQLite) |                                  |
+| **Probabilité Moyenne**     |               |🟠 **R6** (Mauvaise configuration des agents) | 🟠 **R3** (Fiabilité capteurs IoT) | 🔴**R5** (Panne Stream Processing) -  🔴**R4** (Performances Raspberry Pi)  | 🔴**R8** (Panne RabbitMQ)           |
+| **Probabilité Élevée**      |               |  |  | 🔴**R2** (Indisponibilité des Services) | 🔴**R1** (Sécurité des données)      |
+
+---
+
+## Légende des couleurs
+
+- 🔵 **Faible** : Risque mineur, nécessite peu ou pas de mesures d'atténuation.
+- 🟡 **Modéré** : Risque modéré, surveillé et géré si nécessaire.
+- 🟠 **Significatif** : Risque important, actions d'atténuation à considérer.
+- 🔴 **Critique** : Risque majeur, nécessite des mesures immédiates et des plans de gestion.
+
+
+---
+1. **Risque de sécurité des données (R1)**
+   - Ce risque est critique en raison de la nature sensible des données médicales échangées. Une fuite de ces informations pourrait avoir des répercussions énormes. Étant donné le nombre d'intermédiaire parmis lequel circule ces données ainsi que la nature de ces données. Ce risque est classé comme "Important" et "Catastrophique" il est donc primordial de sécuriser ces données.
+
+2. **Risque d’indisponibilité de certains services (R2)**
+   - La perte de connectivité à certains services est aussi un risque à prendre en compte, notre système utilisant énormément de micro-services, il est important de bien gérer pour chaucun les cas il n'y aura plus de contact avec l'exterieur. La probabilité de ce risque est élevée, et l'impact est grave car il interromprait le fonctionnement normal du système. Quand bien même des systèmes de fonctionnement offline soient mis en placess, leurs fonctionnement resterait limité.
+
+3. **Risque de fiabilité des capteurs IoT (R3)**
+   - Les capteurs qui sont présents dans les domiciles que elderspy mets à disposition, bien que très performants peuvent tomber en panne ou se déconnecter. L'impact peut varier (en fonction du type de capteur) nous placerons ici le risque le plus élevé parmis tous ces capteurs : Important. En effet, certains capteurs peuvent tomber en panne sans grande incidence pour le patient (Temperature de l'environnement / Qualité de l'air intérieur). Cependant, certains capteurs surveillant les constantes vitales du patient se doivent d'avoir une disponibilité constante. La moindre déconnexion peut mener à une perte importante de données (manque de données pour reconnaitre des patterns sur les modèles de maladies cardiaques par exemple)
+
+4. **Risque de performances du Raspberry Pi (R4)**
+   - Le Raspberry Pi est la passerelle principale, en fonction du nombre d'appareils à traiter, des problèmes de performance et, entre autre de surchauffe peuvent survenirs. Cela conduirait à une indisponibilité temporaire de la gateway, ce qui serait grave.
+
+5. **Risque de panne du service de date processing (R5)**
+   - Le service de traitement de flux est critique pour l’analyse en temps réel. Sa panne ralentirait le traitement et pourrait empêcher la détection d’événements. La probabilité est moyenne, car bien que le Raspberry Pi soit limité en ressources, des redémarrages automatiques et des protections peuvent limiter les interruptions.
+
+6. **Risque de Mauvaise configuration des différents agents (R6)**
+   - La mauvaise configuration des agents peut causer des problèmes temporaires, mais les effets sont en général récupérables avec des ajustements ou un redémarrage. La probabilité est moyenne en raison de la complexité des configurations requises pour l'intégration de divers services.
+
+7. **Risque d’intrusion via les services AMQP et MQTT (R7)**
+   - Bien que ce risque ait un impact important, la probabilité d'une intrusion est réduite si les bonnes pratiques de sécurité (chiffrement et authentification) sont appliquées.
+
+8. **Risque de panne du RabbitMQ ou des services de messagerie (R8)**
+   - RabbitMQ est central dans cette architecture pour la gestion des messages, et sa non-disponibilitée causerait des perturbations majeures. La probabilité est moyenne, car bien que RabbitMQ soit fiable, il peut être soumis à des interruptions si la charge est élevée ou si une maintenance non planifiée se produit.
+
+9. **Risque de manque de capacité de stockage (SQLite sur le Pi) (R9)**
+    - La saturation du stockage SQLite est possible si les données ne sont pas régulièrement archivées ou supprimées, ou encore, si un accès à Internet coupé de manière trop prolongé. Bien que l'impact soit grave (perte de données), la probabilité est faible si un système de gestion de données efficace est mis en place. Même en cas de coupure d'accès internet, le système doit être en parfaite capacité de fonctionner de manière autonome.
+
+
+---
+
+## Exemple d'utilisation
+
+Pour utiliser cette matrice, commencez par identifier chaque risque dans votre projet, puis évaluez :
+
+1. **Probabilité** : Quelle est la probabilité que ce risque se produise ?
+2. **Impact** : Quel serait l'impact si ce risque se produisait ?
+
+Ensuite, utilisez la matrice pour déterminer le niveau de risque et priorisez les actions d'atténuation en conséquence.
+
+
+
 ## Code structure
 
 ```plaintext
