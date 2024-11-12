@@ -142,17 +142,6 @@ Voici la matrice de risques sur les principaux problèmes que nous avons identif
 
 ---
 
-## Exemple d'utilisation
-
-Pour utiliser cette matrice, commencez par identifier chaque risque dans votre projet, puis évaluez :
-
-1. **Probabilité** : Quelle est la probabilité que ce risque se produise ?
-2. **Impact** : Quel serait l'impact si ce risque se produisait ?
-
-Ensuite, utilisez la matrice pour déterminer le niveau de risque et priorisez les actions d'atténuation en conséquence.
-
-
-
 ## Code structure
 
 ```plaintext
