@@ -64,6 +64,8 @@ If you want to use the SMS alerting service, you need to provide the following e
 - `FREE_SMS_API_USER`: The username for the Free SMS API
 - `FREE_SMS_API_PASS`: The password for the Free SMS API
 
+---
+
 ### Telemetry client service API for Edge simulation
 
 This API simulates sensor data normally published by the edge devices. When used, it will publish messages on the same topic that would be used by the edge device, simulating real telemetry data. The simulation allows testing and monitoring of data flow through RabbitMQ to the backend.

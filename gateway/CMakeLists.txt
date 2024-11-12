@@ -47,7 +47,6 @@ find_package(cpprestsdk REQUIRED)
 target_link_libraries(gateway
         paho-mqttpp3
         paho-mqtt3as
-        amqpcpp
         pthread
         dl
         sqlite3

@@ -23,6 +23,19 @@ services:
     networks:
       - iot_network
 
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gateway
+    depends_on:
+      - nanomq
+      - nodered
+    volumes:
+      - ./telemetry.db:/app/telemetry.db
+    networks:
+      - iot_network
+
   # other future services
 
 networks:
