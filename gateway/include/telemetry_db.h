@@ -38,7 +38,7 @@ public:
     std::vector<std::vector<std::string> > executeQuery(const std::string &query);
 
     // Method to query specific telemetry data
-    std::vector<std::vector<std::string> > getHouseTemperature();
+    std::vector<std::vector<std::string> > getTemperature();
 
     std::vector<std::vector<std::string> > getHeartRate();
 

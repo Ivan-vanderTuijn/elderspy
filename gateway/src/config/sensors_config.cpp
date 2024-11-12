@@ -3,8 +3,8 @@
 // Define the sensor configurations with severity-specific thresholds.
 const std::unordered_map<SensorType, SensorConfig> sensorConfigs = {
     {
-        SensorType::HOUSE_TEMPERATURE, {
-            SensorType::HOUSE_TEMPERATURE, "sensor/house_temperature",
+        SensorType::TEMPERATURE, {
+            SensorType::TEMPERATURE, "sensor/temperature",
             {
                 {
                     {AlertSeverity::CRITICAL, {6, 40}},

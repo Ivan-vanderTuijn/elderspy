@@ -97,8 +97,8 @@ vector<vector<string> > TelemetryDB::executeQuery(const string &query) {
 }
 
 // Method to get house temperature data
-vector<vector<string> > TelemetryDB::getHouseTemperature() {
-    return executeQuery("SELECT value FROM house_temperature");
+vector<vector<string> > TelemetryDB::getTemperature() {
+    return executeQuery("SELECT value FROM temperature");
 }
 
 // Method to get heart rate data

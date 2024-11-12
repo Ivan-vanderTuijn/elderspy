@@ -6,7 +6,7 @@
 
 // Define an enum to represent the types of sensors.
 enum class SensorType {
-    HOUSE_TEMPERATURE,
+    TEMPERATURE,
     HEART_RATE,
 };
 

@@ -79,7 +79,7 @@
     "type": "mqtt out",
     "z": "5a5e11097771e15e",
     "name": "",
-    "topic": "sensor/house_temperature",
+    "topic": "sensor/temperature",
     "qos": "",
     "retain": "",
     "respTopic": "",
