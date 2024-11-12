@@ -16,6 +16,6 @@ const std::string RABBITMQ_DEFAULT_USER("admin");
 const std::string RABBITMQ_DEFAULT_PASS("admin123");
 
 
-const std::string BACKEND_SERVER_ADDRESS("http://192.168.1.210:8080");
+const std::string BACKEND_SERVER_ADDRESS("192.168.1.210:9904");
 
 #endif //GOBLAL_H

@@ -33,7 +33,7 @@ public class GmsGatewayEndpoint {
     @POST
     @Path("/alert")
     public void alertFromEdgeAnalysis(AlertMessage alertMessage) {
-        List<String> phoneNumbers = alertForwarder.forwardAlert(alertMessage);
+        // List<String> phoneNumbers = alertForwarder.forwardAlert(alertMessage);
 
         validateApiCredentials();
 

@@ -178,6 +178,91 @@
     "wires": []
   },
   {
+    "id": "16f34ff38000be38",
+    "type": "inject",
+    "z": "5a5e11097771e15e",
+    "name": "",
+    "props": [
+      {
+        "p": "payload"
+      },
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": "1",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 320,
+    "y": 580,
+    "wires": [
+      [
+        "906dc4a0423d0a17"
+      ]
+    ]
+  },
+  {
+    "id": "906dc4a0423d0a17",
+    "type": "function",
+    "z": "5a5e11097771e15e",
+    "name": "gen_heart_rate",
+    "func": "msg.payload = { deviceId: \"device-005\", value: 200 }\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "const MIN = 40;\nconst MAX = 120;\nlet currentTemp = (MAX + MIN) / 2;\n\ncontext.set(\"MIN\", 40);\ncontext.set(\"MAX\", 120);\ncontext.set(\"currentTemp\", (MAX + MIN) / 2);",
+    "finalize": "",
+    "libs": [],
+    "x": 560,
+    "y": 580,
+    "wires": [
+      [
+        "06645422a7ed788d",
+        "76db9d093e125334"
+      ]
+    ]
+  },
+  {
+    "id": "06645422a7ed788d",
+    "type": "debug",
+    "z": "5a5e11097771e15e",
+    "name": "debug 3",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 750,
+    "y": 580,
+    "wires": []
+  },
+  {
+    "id": "76db9d093e125334",
+    "type": "mqtt out",
+    "z": "5a5e11097771e15e",
+    "name": "",
+    "topic": "sensor/temperature",
+    "qos": "",
+    "retain": "",
+    "respTopic": "",
+    "contentType": "",
+    "userProps": "",
+    "correl": "",
+    "expiry": "",
+    "broker": "612f9c3debb902b4",
+    "x": 800,
+    "y": 520,
+    "wires": []
+  },
+  {
     "id": "612f9c3debb902b4",
     "type": "mqtt-broker",
     "name": "NanoMQ",

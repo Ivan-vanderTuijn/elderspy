@@ -72,6 +72,7 @@ void AlertManager::sendAlert(const AlertSeverity &severity, const string &device
                              const std::string &value) {
     cout << "[AlertManager] Preparing to send alert..." << endl; // Log alert preparation
     // Prepare the alert message
+    cout << "COUCOU : " + backendUrl << endl;
     web::http::client::http_client httpClient(backendUrl);
     web::http::http_request request(web::http::methods::POST);
 
