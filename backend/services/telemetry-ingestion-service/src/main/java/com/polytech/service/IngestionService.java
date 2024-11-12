@@ -59,7 +59,7 @@ public class IngestionService {
             Point point = Point.measurement(data.getMeasurement())
                     .addTag("edgeId", data.getEdgeId())
                     .addTag("deviceId", data.getDeviceId())
-                    .addField("celsius", Double.parseDouble(data.getValue()))
+                    .addField("value", Double.parseDouble(data.getValue()))
                     .time(data.getTimestamp(), WritePrecision.MS);
 
             WriteApiBlocking writeApi = influxDBClient.getWriteApiBlocking();
