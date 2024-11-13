@@ -43,7 +43,7 @@ username: admin
 password: admin123
 ```
 
-## Architecture
+## Architecture (plus de details dans le rapport `~/docs/Rapport_architecture.pdf`
 
 ### Aperçu
 ![architecture overview](/docs/resource/full_archi.png)
