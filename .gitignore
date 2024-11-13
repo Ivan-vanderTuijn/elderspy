@@ -27,4 +27,5 @@ gateway/build
 /gateway/.idea
 /gateway/cmake-build-debug
 /gateway/telemetry.db
+.idea
 
