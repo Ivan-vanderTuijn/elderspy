@@ -28,7 +28,6 @@ const std::unordered_map<SensorType, SensorConfig> sensorConfigs = {
     }
 };
 
-// Define the function to get the sensor type by topic
 SensorType getSensorTypeByTopic(const std::string &topic) {
     for (const auto &[key, config]: sensorConfigs) {
         if (config.topic == topic) {

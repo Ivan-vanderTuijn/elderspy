@@ -14,12 +14,10 @@ TelemetryDB::TelemetryDB(const string &path) : db(nullptr), db_path(path) {
     createTablesIfNotExist();
 }
 
-// Destructor to close the database connection
 TelemetryDB::~TelemetryDB() {
     close();
 }
 
-// Method to get the singleton instance
 TelemetryDB &TelemetryDB::getInstance() {
     static TelemetryDB instance(DATABASE_PATH);
     return instance;
