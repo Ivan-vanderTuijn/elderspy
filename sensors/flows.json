@@ -181,7 +181,7 @@
     "id": "16f34ff38000be38",
     "type": "inject",
     "z": "5a5e11097771e15e",
-    "name": "",
+    "name": "il fait chaud",
     "props": [
       {
         "p": "payload"
@@ -198,7 +198,7 @@
     "topic": "",
     "payload": "",
     "payloadType": "date",
-    "x": 320,
+    "x": 330,
     "y": 580,
     "wires": [
       [
@@ -210,7 +210,7 @@
     "id": "906dc4a0423d0a17",
     "type": "function",
     "z": "5a5e11097771e15e",
-    "name": "gen_heart_rate",
+    "name": "gen_tes_cho",
     "func": "msg.payload = { deviceId: \"device-005\", value: 200 }\nreturn msg;",
     "outputs": 1,
     "timeout": 0,
@@ -218,7 +218,7 @@
     "initialize": "const MIN = 40;\nconst MAX = 120;\nlet currentTemp = (MAX + MIN) / 2;\n\ncontext.set(\"MIN\", 40);\ncontext.set(\"MAX\", 120);\ncontext.set(\"currentTemp\", (MAX + MIN) / 2);",
     "finalize": "",
     "libs": [],
-    "x": 560,
+    "x": 550,
     "y": 580,
     "wires": [
       [
@@ -260,6 +260,91 @@
     "broker": "612f9c3debb902b4",
     "x": 800,
     "y": 520,
+    "wires": []
+  },
+  {
+    "id": "4c30f6499e716446",
+    "type": "inject",
+    "z": "5a5e11097771e15e",
+    "name": "crise cardiaque",
+    "props": [
+      {
+        "p": "payload"
+      },
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": "1",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 340,
+    "y": 700,
+    "wires": [
+      [
+        "40055de241a0f1fb"
+      ]
+    ]
+  },
+  {
+    "id": "40055de241a0f1fb",
+    "type": "function",
+    "z": "5a5e11097771e15e",
+    "name": "gen_crise",
+    "func": "msg.payload = { deviceId: \"device-006\", value: 0 }\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "const MIN = 40;\nconst MAX = 120;\nlet currentTemp = (MAX + MIN) / 2;\n\ncontext.set(\"MIN\", 40);\ncontext.set(\"MAX\", 120);\ncontext.set(\"currentTemp\", (MAX + MIN) / 2);",
+    "finalize": "",
+    "libs": [],
+    "x": 540,
+    "y": 700,
+    "wires": [
+      [
+        "db97d8553dae6101",
+        "35fc93b1010fc2a7"
+      ]
+    ]
+  },
+  {
+    "id": "db97d8553dae6101",
+    "type": "debug",
+    "z": "5a5e11097771e15e",
+    "name": "debug 4",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 750,
+    "y": 700,
+    "wires": []
+  },
+  {
+    "id": "35fc93b1010fc2a7",
+    "type": "mqtt out",
+    "z": "5a5e11097771e15e",
+    "name": "",
+    "topic": "sensor/heart_rate",
+    "qos": "",
+    "retain": "",
+    "respTopic": "",
+    "contentType": "",
+    "userProps": "",
+    "correl": "",
+    "expiry": "",
+    "broker": "612f9c3debb902b4",
+    "x": 800,
+    "y": 640,
     "wires": []
   },
   {

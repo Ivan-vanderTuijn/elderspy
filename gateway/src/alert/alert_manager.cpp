@@ -57,23 +57,35 @@ void AlertManager::onMessage(mqtt::const_message_ptr msg) {
     const SensorThresholds &thresholds = config.thresholds;
 
     // Check against thresholds for alerting
-    for (const auto &[severity, range]: thresholds.thresholds) {
-        // If value exceeds the upper threshold or is below the lower threshold
+    AlertSeverity highestSeverity = AlertSeverity::ENVIRONMENTAL;
+    bool alertSent = false;
+
+    for (const auto &[severity, range] : thresholds.thresholds) {
         if (value > range.second || value < range.first) {
-            cout << "[AlertManager] Value " << value << " exceeds thresholds for severity: " <<
-                    getSeverityString(severity) << endl; // Log threshold breach
-            sendAlert(severity, deviceId, timestamp, std::to_string(value));
+            if (severity < highestSeverity) {
+                highestSeverity = severity;
+            }
+            alertSent = true;
         }
     }
+
+    // Send only the highest priority alert if one was triggered
+    if (alertSent) {
+        cout << "[AlertManager] Value " << value << " exceeds thresholds for severity: " <<
+                getSeverityString(highestSeverity) << endl;
+        sendAlert(highestSeverity, deviceId, timestamp, std::to_string(value), topic);
+    }
+
     cout << "[AlertManager] Threshold checks complete." << endl; // Log threshold checks
 }
 
 void AlertManager::sendAlert(const AlertSeverity &severity, const string &deviceId, const std::string &timestamp,
-                             const std::string &value) {
+                             const std::string &value, const std::string topic) {
     cout << "[AlertManager] Preparing to send alert..." << endl; // Log alert preparation
     // Prepare the alert message
     cout << "COUCOU : " + backendUrl << endl;
-    web::http::client::http_client httpClient(backendUrl);
+    cout << "http://" + backendUrl + "/gsm-gateway/alert" << endl;
+    web::http::client::http_client httpClient("http://" + backendUrl + "/gsm-gateway/alert");
     web::http::http_request request(web::http::methods::POST);
 
     // Build the JSON payload
@@ -82,7 +94,8 @@ void AlertManager::sendAlert(const AlertSeverity &severity, const string &device
     jsonPayload["edgeId"] = EDGE_ID; // Replace with actual edge ID if available
     jsonPayload["deviceId"] = deviceId;
     jsonPayload["timestamp"] = timestamp;
-    jsonPayload["message"] = value;
+    //message = [Sévérité] : attention [topic] threshold exceed at [timestamp] with value [value]
+    jsonPayload["message"] = "[" + getSeverityString(severity) + "] : " + topic + " threshold exceed at " + timestamp + " with value " + value;
 
     cout << "[AlertManager] Sending alert: " << jsonPayload.dump() << endl; // Log alert details
 

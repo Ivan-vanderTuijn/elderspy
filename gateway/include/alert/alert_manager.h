@@ -20,7 +20,7 @@ private:
 
 
     void sendAlert(const AlertSeverity &severity, const std::string &deviceId, const std::string &timestamp,
-                   const std::string &message);
+                   const std::string &message, const std::string topic);
 
     std::string getSeverityString(AlertSeverity severity);
 };
