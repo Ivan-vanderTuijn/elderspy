@@ -1,32 +1,32 @@
 # ElderSpy
 
-## Usage
-### Requirements
+## Utilisation
+### Prérequis
 - Docker
 - JDK 17
 - Maven 3.9.6
 - Kubernetes environment (optional)
 
-### Running the project
-1. Clone the repository
-2. Build and start the backend containers
+### Exécution du projet
+1. Cloner le repository
+2. Construire et démarrer les conteneurs backend
 ```shell
 ~/backend $ docker-compose up --build -d
 ```
-3. Build and start the edge containers
+3. Construire et démarrer les conteneurs edge
 ```shell
 ~/gateway $ docker-compose up --build -d
 ```
-4. Build and start the sensor container
+4. Construire et démarrer le conteneur de capteur
 ```shell
 ~/sensors $ docker build -t elderspy-temp-sensor .
 ~/sensors $ docker run -d elderspy-temp-sensor
 ```
-(optional) Kubernetes deployment 
+(optionnel) Déploiement Kubernetes
 ```shell
 ~/backend/kubernetes $ kubectl apply -f ./namespace -f ./config-maps -f ./deployments -f ./services -f ./secrets -f ./hpa -n elderspy-ns
 ```
-Accessing the following services:
+Accéder aux services suivants :
 
 InfluxDB UI:
 ```
@@ -45,30 +45,37 @@ password: admin123
 
 ## Architecture
 
+### Aperçu
+![architecture overview](/docs/resource/full_archi.png)
+
+### Communication Edge-Backend
+![architecture overview](/docs/resource/edge_backend_comm.png)
+
 ### Backend
+![architecture overview](/docs/resource/only_backend.png)
 
-### Edge
+### Edge et Assistant
+![architecture overview](/docs/resource/assistant_and_edge.png)
 
-### Edge-Backend communication
-
-### Sensors
+### Edge (Data processing)
+![architecture overview](/docs/resource/data_processing_edge.png)
 
 ## Documentation
 
 ### Alerting via SMS
-Currently, the alerting service is configured to send SMS alerts to a predefined phone number via an SMS API.  
-The service is triggered when the telemetry analyser service detects an anomaly in the telemetry data, or when receiving an alert from the edge. 
-The alerting service uses the `Free SMS API` to send SMS alerts.
+Actuellement, le service d'alerte est configuré pour envoyer des alertes SMS à un numéro de téléphone prédéfini via une API SMS.
+Le service est déclenché lorsque le service d'analyse de télémétrie détecte une anomalie dans les données ou lorsqu'une alerte est reçue du edge.
+Le service d'alerte utilise l'`API Free SMS` pour envoyer les alertes SMS.
 
-If you want to use the SMS alerting service, you need to provide the following environment variables, for example via a `.env` file located in the `~/backend/services/gsm-gateway` directory:
-- `FREE_SMS_API_USER`: The username for the Free SMS API
-- `FREE_SMS_API_PASS`: The password for the Free SMS API
+Si vous souhaitez utiliser le service d'alerte SMS, vous devez fournir les variables d'environnement suivantes, par exemple via un fichier`.env` situé dans le répertoire `~/backend/services/gsm-gateway`:
+- `FREE_SMS_API_USER`: Nom d'utilisateur pour l'API Free SMS
+- `FREE_SMS_API_PASS`: Mot de passe pour l'API Free SMS
 
 ---
 
 ### Telemetry client service API for Edge simulation
 
-This API simulates sensor data normally published by the edge devices. When used, it will publish messages on the same topic that would be used by the edge device, simulating real telemetry data. The simulation allows testing and monitoring of data flow through RabbitMQ to the backend.
+Cette API simule les données des capteurs publiées par les dispositifs edge. Lorsqu'elle est utilisée, elle publie des messages sur le même sujet que celui du edge, simulant ainsi des données de télémétrie réelles. La simulation permet de tester et de surveiller le flux de données via RabbitMQ jusqu'au backend.  
 
 | **Endpoint**                         | **Method** | **Description**                                                                                                   | **Request Body**                                                                                                            |
 |--------------------------------------|------------|-------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
@@ -77,8 +84,8 @@ This API simulates sensor data normally published by the edge devices. When used
 | `/{edgeId}/{deviceId}/stop`          | `POST`     | Stops the continuous simulation of sensor data for the specified `edgeId` and `deviceId`.                        | None                                                                                                                        |
 
 **Notes**:
-- **Simulation Trigger**: When these endpoints are called, they will simulate the behavior of an edge device by sending messages on the expected topic.
-- **Message Flow**: The data sent through these endpoints will be forwarded via the RabbitMQ broker, making it accessible to the backend service for further processing.
+- **Simulation Trigger**: Déclenchement de la simulation : Ces endpoints simulent le comportement d'un dispositif edge en envoyant des messages sur le sujet attendu.
+- **Message Flow**: Les données envoyées via ces endpoints seront transmises via le broker RabbitMQ, ce qui les rend accessibles au service backend pour un traitement ultérieur.
 
 ---
 
@@ -146,29 +153,29 @@ Voici la matrice de risques sur les principaux problèmes que nous avons identif
 
 ```plaintext
 elderspy/
-├── backend/                               # Backend services and configurations
-│   ├── grafana-provisioning/               # Grafana dashboard provisioning configurations and data sources (InfluxDB)
-│   ├── kubernetes/                         # Kubernetes deployment configurations and manifests resources
-│   ├── rabbitmq/                           # RabbitMQ configurations (plugins)
-│   ├── services/                           # Microservices of the backend
-│   │   ├── common/                          # Shared modules and utilities
-│   │   ├── alerting-service/                # Service for alert notifications
-│   │   ├── gsm-gateway/                     # GSM gateway service for GSM communication
-│   │   ├── telemetry-analyser-service/      # Analyzes telemetry data
-│   │   ├── telemetry-client/                # Client for sending telemetry data
-│   │   └── telemetry-ingestion-service/     # Service to handle telemetry data ingestion
-│   └── docker-compose.yml                  # Docker Compose file to run the backend services, InfluxDB, RabbitMQ and Grafana
-├── gateway/                                # Gateway-related components (Edge)
-│   ├── include/                             # Header files and other inclusions
-│   ├── src/                                 # Source code for the gateway
-│   │   ├── alert/                            # Alert handling logic
-│   │   ├── mqtt-clients/                     # MQTT clients for message communication
-│   │   └── config/                           # Configuration files for sensors
-│   └── docker-compose.yml                   # Docker Compose file for gateway services
-├── sensors/                                # Sensor-related configurations
-│   └── Dockerfile                           # Docker setup for the sensor module
-│   └── flows.json                           # Node-RED flow for the sensor module
-└── README.md                               # Main project documentation file
+├── backend/                               # Services backend et configurations
+│   ├── grafana-provisioning/               # Configuration de provisionnement des tableaux de bord Grafana et sources de données (InfluxDB)
+│   ├── kubernetes/                         # Configurations de déploiement Kubernetes et ressources manifests
+│   ├── rabbitmq/                           # Configurations de RabbitMQ (plugins)
+│   ├── services/                           # Microservices du backend
+│   │   ├── common/                          # Modules partagés et utilitaires
+│   │   ├── alerting-service/                # Service pour les notifications d'alerte
+│   │   ├── gsm-gateway/                     # Service de passerelle GSM pour la communication GSM
+│   │   ├── telemetry-analyser-service/      # Analyse les données de télémétrie
+│   │   ├── telemetry-client/                # Client pour l'envoi des données de télémétrie
+│   │   └── telemetry-ingestion-service/     # Service pour gérer l'ingestion des données de télémétrie
+│   └── docker-compose.yml                  # Fichier Docker Compose pour exécuter les services backend, InfluxDB, RabbitMQ et Grafana
+├── gateway/                                # Composants liés à la passerelle (Edge)
+│   ├── include/                             # Fichiers d'en-tête et autres inclusions
+│   ├── src/                                 # Code source pour la passerelle
+│   │   ├── alert/                            # Logique de gestion des alertes
+│   │   ├── mqtt-clients/                     # Clients MQTT pour la communication de messages
+│   │   └── config/                           # Fichiers de configuration pour les capteurs
+│   └── docker-compose.yml                   # Fichier Docker Compose pour les services de la passerelle
+├── sensors/                                # Configurations des capteurs
+│   └── Dockerfile                           # Configuration Docker pour le module de capteur
+│   └── flows.json                           # Flux Node-RED pour le module de capteur
+└── README.md                               # Fichier principal de documentation du projet
 ```
 
 ## How to contribute
