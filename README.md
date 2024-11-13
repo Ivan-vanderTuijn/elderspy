@@ -17,16 +17,16 @@
 ```shell
 ~/gateway $ docker-compose up --build -d
 ```
-4. Construire et démarrer le conteneur de capteur
-```shell
-~/sensors $ docker build -t elderspy-temp-sensor .
-~/sensors $ docker run -d elderspy-temp-sensor
-```
-(optionnel) Déploiement Kubernetes
+(optionnel) Déploiement Kubernetes (Work In Progress)
 ```shell
 ~/backend/kubernetes $ kubectl apply -f ./namespace -f ./config-maps -f ./deployments -f ./services -f ./secrets -f ./hpa -n elderspy-ns
 ```
 Accéder aux services suivants :
+
+NodeRed (simulation capteurs):
+```
+http://localhost:1880/
+```
 
 InfluxDB UI:
 ```
