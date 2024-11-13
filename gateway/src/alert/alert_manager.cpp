@@ -54,7 +54,7 @@ void AlertManager::onMessage(mqtt::const_message_ptr msg) {
     AlertSeverity highestSeverity = AlertSeverity::ENVIRONMENTAL;
     bool alertSent = false;
 
-    for (const auto &[severity, range] : thresholds.thresholds) {
+    for (const auto &[severity, range]: thresholds.thresholds) {
         if (value > range.second || value < range.first) {
             if (severity < highestSeverity) {
                 highestSeverity = severity;
@@ -77,7 +77,7 @@ void AlertManager::sendAlert(const AlertSeverity &severity, const string &device
                              const std::string &value, const std::string topic) {
     try {
         cout << "[AlertManager] Preparing to send alert..." << endl; // Log alert preparation
-        web::http::client::http_client httpClient("http://" + backendUrl + "/gsm-gateway/alert");
+        web::http::client::http_client httpClient(backendUrl + "/gsm-gateway/alert");
         web::http::http_request request(web::http::methods::POST);
 
         json jsonPayload;
@@ -85,7 +85,8 @@ void AlertManager::sendAlert(const AlertSeverity &severity, const string &device
         jsonPayload["edgeId"] = EDGE_ID;
         jsonPayload["deviceId"] = deviceId;
         jsonPayload["timestamp"] = timestamp;
-        jsonPayload["message"] = "[" + getSeverityString(severity) + "] : " + topic + " threshold exceed at " + timestamp + " with value " + value;
+        jsonPayload["message"] = "[" + getSeverityString(severity) + "] : " + topic + " threshold exceed at " +
+                                 timestamp + " with value " + value;
 
         cout << "[AlertManager] Sending alert: " << jsonPayload.dump() << endl; // Log alert details
 

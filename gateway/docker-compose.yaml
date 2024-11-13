@@ -28,6 +28,8 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: gateway
+    environment:
+      - BACKEND_IP=${BACKEND_IP}
     depends_on:
       - nanomq
       - nodered
